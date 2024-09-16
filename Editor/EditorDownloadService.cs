@@ -18,9 +18,9 @@ namespace RemoteCsv.Editor
 
             Logger.Log($"Starting remotes refresh...");
 
-            var availableAssets = RemotesScriptableListUtility.FindAllAvailableAssets();
+            RemotesScriptableListUtility.TryCreateListAsset(true);
 
-            Logger.Log($"Found {availableAssets.Count} remote assets in project. Start loading data...");
+            Logger.Log($"Found {RemoteScriptablesList.Instance.Data.Length} remote assets in project. Start loading data...");
 
             DownloadScriptableService.Load(RemoteScriptablesList.Instance.Data);
         }
