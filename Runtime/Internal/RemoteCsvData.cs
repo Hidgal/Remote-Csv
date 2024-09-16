@@ -29,9 +29,9 @@ namespace RemoteCsv.Internal
 #endif
 
         [SerializeField]
-        private ScriptableObject _targetScriptable;
-        [SerializeField]
         private bool _autoParseAfterLoad;
+        [SerializeField]
+        private ScriptableObject _targetScriptable;
         [SerializeField]
         private string _url;
 

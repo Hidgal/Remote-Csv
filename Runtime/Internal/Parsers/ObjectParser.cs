@@ -13,11 +13,11 @@ namespace RemoteCsv.Internal.Parsers
         {
             var data = CSVParser.LoadFromPath(cvsPath);
             int rowIndex = 0;
-            return ParseObject(obj, data, ref rowIndex);
+            return ParseObject(ref obj, data, ref rowIndex);
         }
 
         /// <returns><see langword="true"/> if one or more fields was parsed</returns>
-        public static bool ParseObject(object obj, in List<List<string>> data, ref int rowIndex)
+        public static bool ParseObject(ref object obj, in List<List<string>> data, ref int rowIndex)
         {
             IFieldParser parser;
             bool fieldResult;
@@ -35,7 +35,7 @@ namespace RemoteCsv.Internal.Parsers
                     parser = ParserContainer.GetParser(field);
                     fieldResult = parser.ParseField(obj, field, in data, ref rowIndex);
                     result |= fieldResult;
-                    Logger.Log($"Parsed {field.Name} with result: {fieldResult}");
+                    Logger.Log($"Parsed field: {field.Name}, with result: {fieldResult}");
                 }
                 catch(Exception e)
                 {

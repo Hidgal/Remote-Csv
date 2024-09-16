@@ -21,17 +21,17 @@ namespace RemoteCsv.Internal.Parsers
         public static IFieldParser GetParser(FieldInfo field) => GetParser(field.FieldType);
         public static IFieldParser GetParser(Type type)
         {
+            if (_defaultTypeParsers.TryGetValue(type, out var parser))
+            {
+                return parser;
+            }
+
             if (_enumerableType.IsAssignableFrom(type))
             {
                 if (type.IsArray)
                     return _arrayParser;
                 else
                     throw new Exception("Lists and other generic collections are not supported. Use array instead.");
-            }
-
-            if (_defaultTypeParsers.TryGetValue(type, out var parser))
-            {
-                return parser;
             }
 
             return _classParser;
