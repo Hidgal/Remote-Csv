@@ -34,6 +34,14 @@ namespace RemoteCsv.Editor
             }
         }
 
+        [MenuItem("Tools/Remote Csv/Collect All Remotes")]
+        public static void CollectAllRemotes()
+        {
+            FindAllAvailableAssets();
+            Selection.activeObject = RemoteScriptablesList.Instance;
+            EditorGUIUtility.PingObject(Selection.activeObject);
+        }
+
         [MenuItem("Tools/Remote Csv/Show Remotes List")]
         public static void SelectRemotesList()
         {

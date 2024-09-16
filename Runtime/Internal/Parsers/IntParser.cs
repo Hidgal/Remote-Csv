@@ -26,7 +26,8 @@ namespace RemoteCsv.Internal.Parsers
             {
                 if (columnIndex < data[rowIndex].Count)
                 {
-                    if (int.TryParse(data[rowIndex][columnIndex], out var result))
+                    var dataString = DataString.FormatForNumbers(data[rowIndex][columnIndex]);
+                    if (int.TryParse(dataString, out var result))
                     {
                         value = result;
                         return true;
