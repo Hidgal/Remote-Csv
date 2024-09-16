@@ -1,0 +1,32 @@
+{
+    "name": "RemoteAssets.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:593a5b492d29ac6448b1ebf7f035ef33",
+        "GUID:5c01796d064528144a599661eaab93a6",
+        "GUID:f24cf67903b27ae498b3069ecc30cc11",
+        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4",
+        "GUID:84651a3751eca9349aac36a66bba901b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.madsbangh.easybuttons",
+            "expression": "",
+            "define": "EASY_BUTTONS"
+        },
+        {
+            "name": "com.svermeulen.extenject",
+            "expression": "",
+            "define": "ZENJECT"
+        }
+    ],
+    "noEngineReferences": false
+}

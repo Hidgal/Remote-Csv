@@ -1,0 +1,21 @@
+{
+  "name": "com.hidgal.remote-csv",
+  "version": "0.0.1",
+  "displayName": "Remote Csv",
+  "dependencies": {
+    "com.cysharp.unitask": ""
+  },
+  "unity": "2018.1",
+  "unityRelease": "1f1",
+  "keywords": [
+    "utils",
+    "attribute",
+    "csv"
+  ],
+  "author": {
+    "name": "Hidgal",
+    "email": "hidgal.games@gmail.com",
+    "url": ""
+  },
+  "description": "Plugin for downloading and parsing scriptable objects from remote CSV in Google Sheets"
+}
