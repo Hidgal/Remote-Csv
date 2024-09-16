@@ -39,7 +39,7 @@ namespace RemoteCsv
             if (row < 0)
                 _row = 0;
             else
-                _row = row;
+                _row = row - 1;
 
             if (itemsCount <= 0)
                 _itemsCount = 0;
@@ -60,7 +60,7 @@ namespace RemoteCsv
             if (row < 0)
                 _row = 0;
             else
-                _row = row;
+                _row = row - 1;
 
             if (itemsCount <= 0)
                 _itemsCount = 0;
@@ -78,7 +78,7 @@ namespace RemoteCsv
             if (row < 0)
                 _row = 0;
             else
-                _row = row;
+                _row = row - 1;
 
             if (itemsCount <= 0)
                 _itemsCount = 0;
