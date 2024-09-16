@@ -17,6 +17,21 @@ namespace RemoteCsv
         /// Special for arrays of classes
         /// </summary>
         /// <param name="itemsCount">Arrays only. Override target items count</param>
+        public FromCsvAttribute(int itemsCount)
+        {
+            _column = 0;
+            _row = 0;
+
+            if (itemsCount <= 0)
+                _itemsCount = 0;
+            else
+                _itemsCount = itemsCount;
+        }
+
+        /// <summary>
+        /// Special for arrays of classes
+        /// </summary>
+        /// <param name="itemsCount">Arrays only. Override target items count</param>
         public FromCsvAttribute(int row, int itemsCount)
         {
             _column = 0;
