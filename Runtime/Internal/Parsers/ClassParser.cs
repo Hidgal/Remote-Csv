@@ -1,9 +1,7 @@
 using RemoteCsv.Internal.Extensions;
-using Scriban.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using static UnityEngine.Networking.UnityWebRequest;
 
 namespace RemoteCsv.Internal.Parsers
 {
@@ -42,6 +40,7 @@ namespace RemoteCsv.Internal.Parsers
                             {
                                 parser = ParserContainer.GetParser(field);
                                 result |= parser.ParseField(value, field, in data, ref rowIndex);
+                                rowIndex--;
                             }
                             catch (Exception e)
                             {
@@ -49,7 +48,6 @@ namespace RemoteCsv.Internal.Parsers
                             }
                         }
 
-                        lastRowIndex = savedRowIndex;
                         return result;
                     }
                 }
