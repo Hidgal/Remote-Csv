@@ -23,6 +23,7 @@ https://github.com/Hidgal/Remote-Csv.git
 
 ## Terminology
 **Row** - horizontal line of data in CSV document. In Sheets marked as number on side bar.
+
 **Column** - vertical line of data in CSV document. In Sheets marked as Letter on top bar.
 
 ## How it works
