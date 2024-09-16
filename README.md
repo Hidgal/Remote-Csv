@@ -43,7 +43,7 @@ If the row value has been overridden for a field, the parser will take the value
 In arguments for attribute set information about Column, Row(optional) and Items Count(optional for array)
 3. **Right click** in ScriptableObject asset inspector => **Add To Remotes List**
 Or use **Tools -> Remote Csv -> Collect All Remotes** to find all available to parse Scriptable Objects in project.
-4. Paste URL of CSV page in Google Sheets document to **Url field in Remote Scritpable List**
+4. Paste straight URL to the CSV document to **Url field in Remote Scritpable List** (make sure the document is available to read and download using this link)
 5. To parse file **Right click** in ScriptableObject asset inspector -> **Parse From Csv**. 
 Or use **Tools -> Remote Csv -> Refresh All** to load and parse all Scriptable Objects in **Remote Scriptables List**.
 
@@ -60,22 +60,7 @@ In case of collections, only array is supported.
 **itemsCount** - (optional for array) override items count to parse in array. By default the parser goes through all rows ​​up to the end of the document.
 
 ## Examples
-```
-[System.Serializable]
-public class ParseableTest
-{
-   [SerializeField]
-   [FromCsv(Column.B)]
-   private int _index;
 
-   [SerializeField]
-   [FromCsv(Column.C)]
-   private string _description;
-}
-
-[SerializeField]
-[FromCsv(Column.A)]
-private int _testInt;
 
 [SerializeField]
 [FromCsv(row: 3, itemsCount: 5)]
