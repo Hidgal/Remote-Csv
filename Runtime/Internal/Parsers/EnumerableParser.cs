@@ -18,15 +18,15 @@ namespace RemoteCsv.Internal.Parsers
             var parser = ParserContainer.GetParser(elementType);
             var attribute = field.GetCsvAttribute();
 
-            var startRowIndex = attribute.Row <= 0 ? lastRowIndex : attribute.Row - 1;
-            var itemsCount = attribute.ItemsCount <= 0 ? data.Count : Mathf.Min(attribute.ItemsCount, data.Count);
+            var startRowIndex = attribute.Row <= 0 ? lastRowIndex : attribute.Row;
+            var itemsCount = attribute.ItemsCount <= 0 ? data.Count - startRowIndex : Mathf.Min(attribute.ItemsCount, data.Count);
 
             try
             {
                 var array = Array.CreateInstance(elementType, itemsCount);
                 for (int i = 0; i < array.Length; i++)
                 {
-                    isParsed |= parser.ParseValue(attribute.Column, i + startRowIndex, i + lastRowIndex, in data, ref lastRowIndex, out value, elementType);
+                    isParsed |= parser.ParseValue(attribute.Column, i + startRowIndex, itemsCount, in data, ref lastRowIndex, out value, elementType);
                     array.SetValue(value, i);
                 }
 
@@ -34,12 +34,14 @@ namespace RemoteCsv.Internal.Parsers
                 {
                     field.SetValue(obj, array);
                 }
+
             }
             catch(Exception e)
             {
                 Logger.LogError(e.Message);
             }
 
+            lastRowIndex = Mathf.Max(lastRowIndex, startRowIndex + itemsCount);
             return isParsed;
         }
 

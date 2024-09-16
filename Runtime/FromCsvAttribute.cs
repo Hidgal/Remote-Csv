@@ -16,22 +16,7 @@ namespace RemoteCsv
         /// <summary>
         /// Special for arrays of classes
         /// </summary>
-        /// <param name="itemsCount">Arrays only. Override target items count</param>
-        public FromCsvAttribute(int itemsCount)
-        {
-            _column = 0;
-            _row = 0;
-
-            if (itemsCount <= 0)
-                _itemsCount = 0;
-            else
-                _itemsCount = itemsCount;
-        }
-
-        /// <summary>
-        /// Special for arrays of classes
-        /// </summary>
-        /// <param name="itemsCount">Arrays only. Override target items count</param>
+        /// <param name="itemsCount">Arrays only. Override target items count if > 0</param>
         public FromCsvAttribute(int row, int itemsCount)
         {
             _column = 0;
@@ -39,7 +24,7 @@ namespace RemoteCsv
             if (row < 0)
                 _row = 0;
             else
-                _row = row;
+                _row = row - 1;
 
             if (itemsCount <= 0)
                 _itemsCount = 0;
@@ -50,7 +35,7 @@ namespace RemoteCsv
         /// <param name="column">Target column with data. Starts from 1</param>
         /// <param name="row">Override target row index. Starts from 1</param>
         /// <param name="itemsCount">Arrays only. Override target items count</param>
-        public FromCsvAttribute(int column = 0, int row = 0, int itemsCount = 0)
+        public FromCsvAttribute(int column, int row = 0, int itemsCount = 0)
         {
             if (column <= 0)
                 _column = 0;
@@ -60,7 +45,7 @@ namespace RemoteCsv
             if (row < 0)
                 _row = 0;
             else
-                _row = row;
+                _row = row - 1;
 
             if (itemsCount <= 0)
                 _itemsCount = 0;
@@ -71,14 +56,14 @@ namespace RemoteCsv
         /// <param name="column">Target column with data.</param>
         /// <param name="row">Override target row index. Starts from 1</param>
         /// <param name="itemsCount">Arrays only. Override target items count</param>
-        public FromCsvAttribute(Column column = RemoteCsv.Column.A, int row = 0, int itemsCount = 0)
+        public FromCsvAttribute(Column column, int row = 0, int itemsCount = 0)
         {
             _column = (int)column - 1;
 
             if (row < 0)
                 _row = 0;
             else
-                _row = row;
+                _row = row - 1;
 
             if (itemsCount <= 0)
                 _itemsCount = 0;
