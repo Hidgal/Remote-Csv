@@ -19,7 +19,7 @@ namespace RemoteCsv.Internal.Extensions
 
         public static string GetFilePath(this IRemoteCsvData remoteData)
         {
-            return Path.Combine(Application.streamingAssetsPath, remoteData.FileName + remoteData.Extension);
+            return Path.Combine(Application.dataPath, RemoteScriptablesList.Instance.DownloadFolderPath, remoteData.FileName + remoteData.Extension);
         }
 
         public static string ReadAllText(this IRemoteCsvData remoteData)

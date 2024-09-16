@@ -1,4 +1,3 @@
-using Castle.Core.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ namespace RemoteCsv.Internal.Extensions
 {
     public static class FieldAttributeExtension
     {
-        public static FromCsvAttribute GetCsvAttribute(this FieldInfo info) => info.GetAttribute<FromCsvAttribute>();
+        public static FromCsvAttribute GetCsvAttribute(this FieldInfo info) => info.GetCustomAttribute<FromCsvAttribute>();
         public static IEnumerable<FieldInfo> GetFieldsWithCsvAttribute(this Type targetType) => GetFieldsWithAttribute<FromCsvAttribute>(targetType);
 
         public static IEnumerable<FieldInfo> GetFieldsWithAttribute(this Type targetType, Type attributeType)
