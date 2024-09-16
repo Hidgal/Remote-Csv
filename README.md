@@ -60,9 +60,62 @@ In case of collections, only array is supported.
 **itemsCount** - (optional for array) override items count to parse in array. By default the parser goes through all rows ​​up to the end of the document.
 
 ## Examples
+1. Simple int value and array int[] to parse
+```csharp
+[SerializeField]
+[FromCsv(Column.B)]
+private int[] _parsedValues;
+[SerializeField]
+[FromCsv(Column.D, row: 2)]
+private int _anotherValue;
+```
+![Parse Result](https://i.imgur.com/VUI6l4p.png "Parse Result")
 
+2. Array of serialiazable classes. 
+> Note: if **itemsCount <= 0**, then the parser processes all the information from the csv file
+
+```csharp
+[System.Serializable]
+public class TestParseClass
+{
+    [SerializeField]
+    [FromCsv(Column.B)]
+    private int _intValue;
+            
+    [SerializeField]
+    [FromCsv(Column.C)]
+    private string _stringValue;
+}
 
 [SerializeField]
-[FromCsv(row: 3, itemsCount: 5)]
-private ParseableTest[] _parse;
+[FromCsv(row: 2, itemsCount: 0)]
+private TestParseClass[] _someData;
 ```
+![Parse Result](https://i.imgur.com/SFb5nhi.png "Parse Result")
+
+3. An example of complex parsing of different data
+
+```csharp
+[System.Serializable]
+public class TestParseClass
+{
+    [SerializeField]
+    [FromCsv(Column.B)]
+    private int _intValue;
+            
+    [SerializeField]
+    [FromCsv(Column.C)]
+    private string _stringValue;
+}
+
+[SerializeField]
+[FromCsv(row: 2, itemsCount: 2)]
+private TestParseClass[] _someData;
+[SerializeField]
+[FromCsv(Column.B, row: 5)]
+private int _anotherIntValue;
+[SerializeField]
+[FromCsv(Column.E, row: 2)]
+private float _floatValue;
+```
+![Parse Result](https://i.imgur.com/HxGt5Oo.png "Parse Result")
