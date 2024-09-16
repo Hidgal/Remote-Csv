@@ -20,11 +20,13 @@ namespace RemoteCsv.Internal
                 return _instance;
             }
         }
-
+        [SerializeField]
+        private string _downloadFolderPath = "RemoteCsv";
         [SerializeField]
         private RemoteCsvData[] _data;
 
         public IRemoteCsvData[] Data => _data;
+        public string DownloadFolderPath => _downloadFolderPath;
 
         public void CreateDataArray() => _data = new RemoteCsvData[0];
 
