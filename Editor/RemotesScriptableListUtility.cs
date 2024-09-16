@@ -17,15 +17,16 @@ namespace RemoteCsv.Editor
             var type = command.context.GetType();
             if (RemoteTypesUtility.IsAvailableType(type))
             {
-                TryCreateListAsset();
+                var wasChanged = TryCreateListAsset();
+                wasChanged |= RemoteScriptablesList.Instance.TryAddData(command.context as ScriptableObject);
 
-                if(RemoteScriptablesList.Instance.TryAddData(command.context as ScriptableObject))
+                if (wasChanged)
                 {
-                    SelectRemotesList();
+                    AssetDatabase.SaveAssetIfDirty(RemoteScriptablesList.Instance);
+                    AssetDatabase.Refresh();
                 }
 
-                AssetDatabase.SaveAssetIfDirty(RemoteScriptablesList.Instance);
-                AssetDatabase.Refresh();
+                SelectRemotesList();
             }
             else
             {
@@ -41,7 +42,7 @@ namespace RemoteCsv.Editor
             EditorGUIUtility.PingObject(Selection.activeObject);
         }
 
-        public static void TryCreateListAsset(bool saveAssets = false)
+        public static bool TryCreateListAsset(bool saveAssets = false)
         {
             if (!RemoteScriptablesList.Instance)
             {
@@ -58,7 +59,11 @@ namespace RemoteCsv.Editor
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
                 }
+
+                return true;
             }
+
+            return false;
         }
 
         public static List<ScriptableObject> FindAllAvailableAssets()

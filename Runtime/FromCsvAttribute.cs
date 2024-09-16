@@ -3,48 +3,67 @@ using System;
 namespace RemoteCsv
 {
     [AttributeUsage(AttributeTargets.Field)]
-    public class FromCsvAttribute: Attribute
+    public class FromCsvAttribute : Attribute
     {
-        private readonly int _rowIndex;
+        private readonly int _row;
+        private readonly int _column;
         private readonly int _itemsCount;
-        private readonly int _columnIndex;
 
-        public int ColumnIndex => _columnIndex;
-        public int RowIndex => _rowIndex;
+        public int Row => _row;
+        public int Column => _column;
         public int ItemsCount => _itemsCount;
 
-        /// <param name="columnIndex">Target column with data</param>
-        /// <param name="rowIndex">Override target row index. Starts from 1</param>
+        /// <summary>
+        /// Special for arrays of classes
+        /// </summary>
         /// <param name="itemsCount">Arrays only. Override target items count</param>
-        public FromCsvAttribute(int columnIndex, int rowIndex = 0, int itemsCount = 0)
+        public FromCsvAttribute(int row, int itemsCount)
         {
-            if (columnIndex < 0)
-                _columnIndex = 0;
-            else
-                _columnIndex = columnIndex;
+            _column = 0;
 
-            if(rowIndex < 0)
-                _rowIndex = rowIndex;
+            if (row < 0)
+                _row = 0;
             else
-                _rowIndex = rowIndex;
+                _row = row;
 
-            if(itemsCount <= 0)
+            if (itemsCount <= 0)
                 _itemsCount = 0;
             else
                 _itemsCount = itemsCount;
         }
 
-        /// <param name="column">Target column with data</param>
-        /// <param name="rowIndex">Override target row index. Starts from 1</param>
+        /// <param name="column">Target column with data. Starts from 1</param>
+        /// <param name="row">Override target row index. Starts from 1</param>
         /// <param name="itemsCount">Arrays only. Override target items count</param>
-        public FromCsvAttribute(Column column, int rowIndex = 0, int itemsCount = 0)
+        public FromCsvAttribute(int column = 0, int row = 0, int itemsCount = 0)
         {
-            _columnIndex = (int)column;
-
-            if (rowIndex < 0)
-                _rowIndex = rowIndex;
+            if (column <= 0)
+                _column = 0;
             else
-                _rowIndex = rowIndex;
+                _column = column - 1;
+
+            if (row < 0)
+                _row = 0;
+            else
+                _row = row;
+
+            if (itemsCount <= 0)
+                _itemsCount = 0;
+            else
+                _itemsCount = itemsCount;
+        }
+
+        /// <param name="column">Target column with data.</param>
+        /// <param name="row">Override target row index. Starts from 1</param>
+        /// <param name="itemsCount">Arrays only. Override target items count</param>
+        public FromCsvAttribute(Column column = RemoteCsv.Column.A, int row = 0, int itemsCount = 0)
+        {
+            _column = (int)column - 1;
+
+            if (row < 0)
+                _row = 0;
+            else
+                _row = row;
 
             if (itemsCount <= 0)
                 _itemsCount = 0;

@@ -1,7 +1,7 @@
 using RemoteCsv.Internal.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 
 namespace RemoteCsv.Internal.Parsers
 {
@@ -10,7 +10,7 @@ namespace RemoteCsv.Internal.Parsers
         public bool ParseField(object obj, FieldInfo field, in List<List<string>> data, ref int lastRowIndex)
         {
             var attribute = field.GetCsvAttribute();
-            var result = ParseValue(attribute.ColumnIndex, attribute.RowIndex, attribute.ItemsCount, in data, ref lastRowIndex, out var value);
+            var result = ParseValue(attribute.Column, attribute.Row, attribute.ItemsCount, in data, ref lastRowIndex, out var value);
 
             if (result)
                 field.SetValue(obj, value);
@@ -18,22 +18,15 @@ namespace RemoteCsv.Internal.Parsers
             return result;
         }
 
-        public bool ParseValue(int columnIndex, int rowStartIndex, int rowEndIndex, in List<List<string>> data, ref int lastRowIndex, out object value)
+        public bool ParseValue(int columnIndex, int rowIndex, int itemsCount, in List<List<string>> data, ref int lastRowIndex, out object value, Type type = null)
         {
+            rowIndex = this.GetActualRowIndex(rowIndex, ref lastRowIndex);
 
-            if (rowStartIndex < 0)
+            if (rowIndex < data.Count)
             {
-                rowStartIndex = lastRowIndex;
-                lastRowIndex++;
-            }
-            else
-                lastRowIndex = Mathf.Max(lastRowIndex, rowStartIndex);
-
-            if (rowStartIndex < data.Count)
-            {
-                if (columnIndex < data[rowStartIndex].Count)
+                if (columnIndex < data[rowIndex].Count)
                 {
-                    value = data[rowStartIndex][columnIndex];
+                    value = data[rowIndex][columnIndex];
                     return true;
                 }
             }

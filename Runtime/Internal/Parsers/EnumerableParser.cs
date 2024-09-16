@@ -18,7 +18,7 @@ namespace RemoteCsv.Internal.Parsers
             var parser = ParserContainer.GetParser(elementType);
             var attribute = field.GetCsvAttribute();
 
-            var startRowIndex = attribute.RowIndex <= 0 ? lastRowIndex : attribute.RowIndex - 1;
+            var startRowIndex = attribute.Row <= 0 ? lastRowIndex : attribute.Row - 1;
             var itemsCount = attribute.ItemsCount <= 0 ? data.Count : Mathf.Min(attribute.ItemsCount, data.Count);
 
             try
@@ -26,7 +26,7 @@ namespace RemoteCsv.Internal.Parsers
                 var array = Array.CreateInstance(elementType, itemsCount);
                 for (int i = 0; i < array.Length; i++)
                 {
-                    isParsed |= parser.ParseValue(attribute.ColumnIndex, i + startRowIndex, i + lastRowIndex, in data, ref lastRowIndex, out value);
+                    isParsed |= parser.ParseValue(attribute.Column, i + startRowIndex, i + lastRowIndex, in data, ref lastRowIndex, out value, elementType);
                     array.SetValue(value, i);
                 }
 
@@ -43,7 +43,7 @@ namespace RemoteCsv.Internal.Parsers
             return isParsed;
         }
 
-        public bool ParseValue(int columnIndex, int rowStartIndex, int rowEndIndex, in List<List<string>> data, ref int lastRowIndex, out object value)
+        public bool ParseValue(int columnIndex, int rowIndex, int itemsCount, in List<List<string>> data, ref int lastRowIndex, out object value, Type type = null)
         {
             throw new Exception("Can`t parse enumerable value!");
         }
