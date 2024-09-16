@@ -10,7 +10,7 @@ namespace RemoteCsv.Internal.Parsers
         public bool ParseField(object obj, FieldInfo field, in List<List<string>> data, ref int lastRowIndex)
         {
             var attribute = field.GetCsvAttribute();
-            var result = ParseValue(attribute.Column, attribute.RowStart, attribute.ItemsCount, in data, ref lastRowIndex, out var value);
+            var result = ParseValue(attribute.ColumnIndex, attribute.RowIndex, attribute.ItemsCount, in data, ref lastRowIndex, out var value);
 
             if(result)
                 field.SetValue(obj, value);

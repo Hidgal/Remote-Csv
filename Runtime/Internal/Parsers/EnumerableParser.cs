@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using Logger = RemoteCsv.Internal.Logger;
 
 namespace RemoteCsv.Internal.Parsers
 {
@@ -17,15 +18,15 @@ namespace RemoteCsv.Internal.Parsers
             var parser = ParserContainer.GetParser(elementType);
             var attribute = field.GetCsvAttribute();
 
-            var startRowIndex = attribute.RowStart < 0 ? lastRowIndex : attribute.RowStart;
-            var itemsCount = attribute.ItemsCount < 0 ? data.Count : Mathf.Min(attribute.ItemsCount, data.Count);
+            var startRowIndex = attribute.RowIndex <= 0 ? lastRowIndex : attribute.RowIndex - 1;
+            var itemsCount = attribute.ItemsCount <= 0 ? data.Count : Mathf.Min(attribute.ItemsCount, data.Count);
 
             try
             {
                 var array = Array.CreateInstance(elementType, itemsCount);
                 for (int i = 0; i < array.Length; i++)
                 {
-                    isParsed |= parser.ParseValue(attribute.Column, i + startRowIndex, i + lastRowIndex, in data, ref lastRowIndex, out value);
+                    isParsed |= parser.ParseValue(attribute.ColumnIndex, i + startRowIndex, i + lastRowIndex, in data, ref lastRowIndex, out value);
                     array.SetValue(value, i);
                 }
 
@@ -36,7 +37,7 @@ namespace RemoteCsv.Internal.Parsers
             }
             catch(Exception e)
             {
-                RemoteCsv.Internal.Logger.LogError(e.Message);
+                Logger.LogError(e.Message);
             }
 
             return isParsed;
