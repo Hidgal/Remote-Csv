@@ -14,7 +14,7 @@
 
 ## Installation
 ##### Dependencies:
-You need to Install **[UniTask by Cysharp](https://github.com/Cysharp/UniTask "UniTask")** before this package
+You need to Install **[UniTask by Cysharp](https://github.com/Cysharp/UniTask "UniTask")** via **Unity Package Manager** before this package
 ##### How To Install:
 
  - Go to **Package Manager**
