@@ -1,3 +1,4 @@
+#if UNITASK_INSTALLED
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
@@ -5,7 +6,7 @@ namespace RemoteCsv.Internal.Download.UniTaskLoader
 {
     public class UniTaskDownloadService : AbstractDownloadService
     {
-        public UniTaskDownloadService(CancellationToken token = default, params IRemoteCsvData[] remotes) 
+        public UniTaskDownloadService(CancellationToken token = default, params IRemoteCsvData[] remotes)
             : base(token, remotes) { }
 
         protected override void StartLoadingInternal()
@@ -30,4 +31,4 @@ namespace RemoteCsv.Internal.Download.UniTaskLoader
         }
     }
 }
-
+#endif

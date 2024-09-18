@@ -1,7 +1,6 @@
-﻿using System.IO;
+﻿#if UNITASK_INSTALLED
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using RemoteCsv.Internal.Extensions;
 using UnityEngine.Networking;
 
 namespace RemoteCsv.Internal.Download.UniTaskLoader
@@ -21,26 +20,11 @@ namespace RemoteCsv.Internal.Download.UniTaskLoader
 
             if (!IsRequestValid()) return;
 
-            _filePath = _remoteData.GetFilePath();
-            _currentHash = GetCurrentHash();
-
-            await UpdateFile();
+            await UpdateFile().AsUniTask();
 
             FinishLoading();
         }
-
-        protected async UniTask UpdateFile()
-        {
-            if (!IsHashChanged()) return;
-
-            TryCreateDirectory();
-
-            if (_request.downloadHandler.data != null)
-                await File.WriteAllBytesAsync(_filePath, _request.downloadHandler.data, cancellationToken: _token).AsUniTask();
-            else
-                await File.WriteAllTextAsync(_filePath, string.Empty, cancellationToken: _token).AsUniTask();
-
-            ImportCsvAsset();
-        }
     }
 }
+
+#endif
