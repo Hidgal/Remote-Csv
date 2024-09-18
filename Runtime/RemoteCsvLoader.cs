@@ -1,11 +1,17 @@
+using Logger = RemoteCsv.Internal.Logger;
 using System.Collections.Generic;
 using System.Threading;
 using RemoteCsv.Internal;
-using RemoteCsv.Internal.Download.CoroutineLoader;
-using RemoteCsv.Internal.Download.EditorCoroutineLoader;
-using RemoteCsv.Internal.Download.UniTaskLoader;
 using UnityEngine;
-using Logger = RemoteCsv.Internal.Logger;
+
+using RemoteCsv.Internal.Download.CoroutineLoader;
+
+#if UNITY_EDITOR
+using RemoteCsv.Internal.Download.EditorCoroutineLoader;
+#endif
+#if UNITASK_INSTALLED
+using RemoteCsv.Internal.Download.UniTaskLoader;
+#endif
 
 namespace RemoteCsv
 {
