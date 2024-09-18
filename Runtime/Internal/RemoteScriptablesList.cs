@@ -9,7 +9,6 @@ namespace RemoteCsv.Internal
         public const string DEFAULT_LIST_NAME = "Remote Scriptables List";
 
         private static RemoteScriptablesList _instance;
-
         public static RemoteScriptablesList Instance
         {
             get
@@ -20,6 +19,7 @@ namespace RemoteCsv.Internal
                 return _instance;
             }
         }
+
         [SerializeField]
         private string _downloadFolderPath = "RemoteCsv";
         [SerializeField]
@@ -27,8 +27,6 @@ namespace RemoteCsv.Internal
 
         public IRemoteCsvData[] Data => _data;
         public string DownloadFolderPath => _downloadFolderPath;
-
-        public void CreateDataArray() => _data = new RemoteCsvData[0];
 
         public bool HasData(ScriptableObject scriptable) => GetDataByScriptable(scriptable) != null;
         public IRemoteCsvData GetDataByScriptable(ScriptableObject scriptable)
@@ -38,6 +36,8 @@ namespace RemoteCsv.Internal
         }
 
 #if UNITY_EDITOR
+        public void CreateDataArray() => _data = new RemoteCsvData[0];
+
         public bool TryAddData(ScriptableObject scriptable)
         {
             if (!HasData(scriptable))

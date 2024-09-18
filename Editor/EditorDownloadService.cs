@@ -7,6 +7,8 @@ namespace RemoteCsv.Editor
 {
     public static class EditorDownloadService
     {
+        private static IDownloadService _downloadService;
+
         [MenuItem("Tools/Remote Csv/Refresh All")]
         public static void RefreshAll()
         {
@@ -22,7 +24,8 @@ namespace RemoteCsv.Editor
 
             Logger.Log($"Found {RemoteScriptablesList.Instance.Data.Length} remote assets in project. Start loading data...");
 
-            DownloadScriptableService.Load(RemoteScriptablesList.Instance.Data);
+            _downloadService?.Dispose();
+            _downloadService = RemoteCsvLoader.Load(Application.exitCancellationToken, RemoteScriptablesList.Instance.Data);
         }
 
         [MenuItem("CONTEXT/ScriptableObject/Parse From Csv")]
@@ -31,7 +34,7 @@ namespace RemoteCsv.Editor
             var type = command.context.GetType();
             if (RemoteTypesUtility.IsAvailableType(type))
             {
-                DownloadScriptableService.Load(command.context as ScriptableObject);
+                RemoteCsvLoader.Load(Application.exitCancellationToken, command.context as ScriptableObject);
             }
             else
             {

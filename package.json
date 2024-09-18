@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "displayName": "Remote Csv",
   "dependencies": {
-    "com.cysharp.unitask": ""
+    "com.unity.editorcoroutines": "1.0.0"
   },
   "unity": "2018.1",
   "unityRelease": "1f1",
@@ -17,5 +17,5 @@
     "email": "hidgal.games@gmail.com",
     "url": ""
   },
-  "description": "Plugin for downloading and parsing scriptable objects from remote CSV in Google Sheets"
+  "description": "Package for download CSV by URL and then parse it to the ScriptableObjects"
 }

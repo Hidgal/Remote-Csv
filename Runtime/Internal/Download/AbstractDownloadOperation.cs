@@ -1,64 +1,43 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Threading;
-using Cysharp.Threading.Tasks;
 using RemoteCsv.Internal.Extensions;
 using RemoteCsv.Internal.Parsers;
 using UnityEngine.Networking;
 
 namespace RemoteCsv.Internal.Download
 {
-    public class AsyncDownloadOperation
+    public abstract class AbstractDownloadOperation
     {
-        private readonly CancellationToken _token;
-        private readonly IRemoteCsvData _remoteData;
-        private readonly bool _forceParseData;
-        private readonly int _index;
+        protected readonly CancellationToken _token;
+        protected readonly IRemoteCsvData _remoteData;
+        protected readonly bool _forceParseData;
+        protected readonly int _index;
 
-        private string _filePath;
-        private UnityWebRequest _request;
-        private string _currentHash;
-        private string _resultLog;
+        protected UnityWebRequest _request;
+        protected string _currentHash;
+        protected string _resultLog;
+        protected string _filePath;
+        protected string _url;
 
-#if UNITY_EDITOR
-        private DateTime _startDate;
-#endif
+        protected string _name => _remoteData.FileName;
+        protected string _dataHash => _remoteData.Hash;
+        protected string _fileNameWithExtension => _remoteData.Extension;
 
-        private string _url => _remoteData.Url;
-        private string _name => _remoteData.FileName;
-        private string _dataHash => _remoteData.Hash;
-        private string _fileNameWithExtension => _remoteData.Extension;
-
-        public AsyncDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
+        public AbstractDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
         {
             _index = index;
             _token = token;
             _remoteData = remoteScriptable;
             _forceParseData = forceParseData;
+
+            if(_remoteData != null)
+                _url = GoogleUrlValidator.ValidateUrl(_remoteData.Url);
         }
 
-        public async UniTask LoadData()
+        protected void FinishLoading()
         {
-            if (!IsInputDataValid()) return;
-
-#if UNITY_EDITOR
-            _startDate = DateTime.Now;
-#endif
-
-            var validUrl = GoogleUrlValidator.ValidateUrl(_url);
-            _request = UnityWebRequest.Get(validUrl);
-
-            await _request.SendWebRequest().WithCancellation(_token);
-
-            if (!IsRequestValid()) return;
-
-            _filePath = _remoteData.GetFilePath();
-            _currentHash = GetCurrentHash();
-
-            await UpdateFile();
-
-            if(_remoteData.AutoParseAfterLoad || _forceParseData)
+            if (_remoteData.AutoParseAfterLoad || _forceParseData)
             {
                 ObjectParser.ParseObject(_remoteData.TargetScriptable, _remoteData.GetFilePath());
             }
@@ -69,7 +48,7 @@ namespace RemoteCsv.Internal.Download
             LogResult();
         }
 
-        private async UniTask UpdateFile()
+        protected bool IsHashChanged()
         {
             if (!string.IsNullOrEmpty(_currentHash))
             {
@@ -79,27 +58,30 @@ namespace RemoteCsv.Internal.Download
                 if (_currentHash == hashSum)
                 {
                     _resultLog = "is already up to date";
-                    return;
+                    return false;
                 }
             }
 
+            return true;
+        }
+
+        protected void TryCreateDirectory()
+        {
             var directoryPath = Path.GetDirectoryName(_filePath);
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
             }
+        }
 
-            if (_request.downloadHandler.data != null)
-                await File.WriteAllBytesAsync(_filePath, _request.downloadHandler.data, cancellationToken: _token).AsUniTask();
-            else
-                await File.WriteAllTextAsync(_filePath, string.Empty, cancellationToken: _token).AsUniTask();
-
+        protected void ImportCsvAsset()
+        {
 #if UNITY_EDITOR
             UnityEditor.AssetDatabase.ImportAsset(_remoteData.GetAssetPath());
 #endif
         }
 
-        private string GetCurrentHash()
+        protected string GetCurrentHash()
         {
             if (_forceParseData)
             {
@@ -118,7 +100,7 @@ namespace RemoteCsv.Internal.Download
             }
         }
 
-        private bool IsRequestValid()
+        protected bool IsRequestValid()
         {
             if (_request.result == UnityWebRequest.Result.ConnectionError || _request.result == UnityWebRequest.Result.ProtocolError)
             {
@@ -135,7 +117,7 @@ namespace RemoteCsv.Internal.Download
             return true;
         }
 
-        private bool IsInputDataValid()
+        protected bool IsInputDataValid()
         {
             if (_remoteData == null)
             {
@@ -164,7 +146,7 @@ namespace RemoteCsv.Internal.Download
             return true;
         }
 
-        private void LogResult()
+        protected void LogResult()
         {
             var resultLogBuilder = new StringBuilder();
 
@@ -177,9 +159,6 @@ namespace RemoteCsv.Internal.Download
 #if UNITY_EDITOR
             var size = FileExtensions.GetSizeString((ulong)new FileInfo(_filePath).Length);
             resultLogBuilder.AppendLine($"Download Size: {size}");
-
-            var downloadTime = DateTime.Now - _startDate;
-            resultLogBuilder.AppendLine($"Load Time: {downloadTime:mm\\:ss\\:ff}");
 #endif
 
             Logger.Log(resultLogBuilder.ToString());
