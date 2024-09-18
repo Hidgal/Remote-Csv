@@ -5,7 +5,7 @@ using Logger = RemoteCsv.Internal.Logger;
 
 namespace RemoteCsv.Editor
 {
-    public static class EditorDownloadService
+    public static class RemoteCsvEditorUtility
     {
         private static IDownloadService _downloadService;
 

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using RemoteCsv.Internal.Extensions;
 using RemoteCsv.Internal.Parsers;
 using UnityEngine.Networking;
@@ -162,6 +163,23 @@ namespace RemoteCsv.Internal.Download
 #endif
 
             Logger.Log(resultLogBuilder.ToString());
+        }
+
+        protected async Task UpdateFile()
+        {
+            _filePath = _remoteData.GetFilePath();
+            _currentHash = GetCurrentHash();
+
+            if (!IsHashChanged()) return;
+
+            TryCreateDirectory();
+
+            if (_request.downloadHandler.data != null)
+                await File.WriteAllBytesAsync(_filePath, _request.downloadHandler.data, cancellationToken: _token);
+            else
+                await File.WriteAllTextAsync(_filePath, string.Empty, cancellationToken: _token);
+
+            ImportCsvAsset();
         }
     }
 }
