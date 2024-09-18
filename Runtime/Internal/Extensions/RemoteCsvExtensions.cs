@@ -10,7 +10,7 @@ namespace RemoteCsv.Internal.Extensions
             var filePath = GetFilePath(remoteData);
             var assetsIndex = filePath.IndexOf("Assets");
 
-            return filePath.Substring(assetsIndex).Replace("Assets", string.Empty);
+            return filePath.Substring(assetsIndex);
         }
 
         public static string GetFilePath(this IRemoteCsvData remoteData)
