@@ -7,24 +7,24 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
 {
     public class EditorCoroutineDownloadService : AbstractDownloadService
     {
-        private EditorCoroutine _coroutine;
+        private EditorCoroutine _downloadRoutine;
 
         public EditorCoroutineDownloadService(CancellationToken token = default, params IRemoteCsvData[] remotes)
             : base(token, remotes) { }
 
         protected override void StartLoadingInternal()
         {
-            _coroutine = EditorCoroutineUtility.StartCoroutine(LoadData(), this);
+            _downloadRoutine = EditorCoroutineUtility.StartCoroutine(LoadData(), this);
         }
 
         public override void Dispose()
         {
             base.Dispose();
 
-            if (_coroutine != null)
+            if (_downloadRoutine != null)
             {
-                EditorCoroutineUtility.StopCoroutine(_coroutine);
-                _coroutine = null;
+                EditorCoroutineUtility.StopCoroutine(_downloadRoutine);
+                _downloadRoutine = null;
             }
         }
 

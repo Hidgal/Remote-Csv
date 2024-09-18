@@ -1,15 +1,14 @@
-#if UNITY_EDITOR
 using System.Collections;
 using System.Threading;
 using UnityEngine.Networking;
 
-namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
+namespace RemoteCsv.Internal.Download.CoroutineLoader
 {
-    public class EditorCoroutineDownloadOperation : AbstractDownloadOperation
+    public class CoroutineDownloadOperation : AbstractDownloadOperation
     {
-        public EditorCoroutineDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
+        public CoroutineDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
             : base(index, remoteScriptable, token, forceParseData) { }
-
+        
         public IEnumerator LoadData()
         {
             if (!IsInputDataValid()) yield break;
@@ -26,5 +25,3 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
         }
     }
 }
-
-#endif
