@@ -1,6 +1,6 @@
 {
-    "name": "RemoteAssets.Editor",
-    "rootNamespace": "",
+    "name": "RemoteCsv.Editor",
+    "rootNamespace": "RemoteCsv",
     "references": [
         "GUID:50a62104d25b29b4c95159af8071e3f9"
     ],
