@@ -9,10 +9,10 @@ namespace RemoteCsv.Internal.Download
     {
         public event Action OnLoadFinish;
 
-        protected readonly CancellationTokenSource _cts;
         protected readonly bool _forceRefreshLocalData;
         protected readonly IReadOnlyList<IRemoteCsvData> _remotes;
 
+        protected CancellationTokenSource _cts;
         protected bool _isCompleted;
 
         private DateTime _startDate;
@@ -24,16 +24,20 @@ namespace RemoteCsv.Internal.Download
             _forceRefreshLocalData = UnityEngine.Application.isEditor;
 
             _remotes = remotes;
+            token.Register(OnRootTokenCancel);
             _cts = CancellationTokenSource.CreateLinkedTokenSource(token);
-            _cts.Token.Register(LogCancellation);
 
             StartLoading();
         }
 
         public virtual void Dispose()
         {
-            _cts.Cancel();
-            _cts.Dispose();
+            if(_cts != null)
+            {
+                _cts.Cancel();
+                _cts.Dispose();
+                _cts = null;
+            }
         }
 
         protected abstract void StartLoadingInternal();
@@ -78,8 +82,9 @@ namespace RemoteCsv.Internal.Download
             StartLoadingInternal();
         }
 
-        private void LogCancellation()
+        private void OnRootTokenCancel()
         {
+            Dispose();
             Logger.LogError("Load operation was canceled");
         }
     }

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -7,7 +8,7 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
 {
     public class EditorCoroutineDownloadOperation : AbstractDownloadOperation
     {
-        public EditorCoroutineDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData) 
+        public EditorCoroutineDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
             : base(index, remoteScriptable, token, forceParseData) { }
 
         public IEnumerator LoadData()
@@ -26,3 +27,5 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
         }
     }
 }
+
+#endif

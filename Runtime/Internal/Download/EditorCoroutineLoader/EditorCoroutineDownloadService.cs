@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using System.Threading;
 using Unity.EditorCoroutines.Editor;
@@ -8,7 +9,7 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
     {
         private EditorCoroutine _coroutine;
 
-        public EditorCoroutineDownloadService(CancellationToken token = default, params IRemoteCsvData[] remotes) 
+        public EditorCoroutineDownloadService(CancellationToken token = default, params IRemoteCsvData[] remotes)
             : base(token, remotes) { }
 
         protected override void StartLoadingInternal()
@@ -21,7 +22,10 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
             base.Dispose();
 
             if (_coroutine != null)
+            {
                 EditorCoroutineUtility.StopCoroutine(_coroutine);
+                _coroutine = null;
+            }
         }
 
         private IEnumerator LoadData()
@@ -44,3 +48,5 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
         }
     }
 }
+
+#endif

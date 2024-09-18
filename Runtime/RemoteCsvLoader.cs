@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using RemoteCsv.Internal;
+using RemoteCsv.Internal.Download.EditorCoroutineLoader;
 using RemoteCsv.Internal.Download.UniTaskLoader;
 using UnityEngine;
 using Logger = RemoteCsv.Internal.Logger;
@@ -37,7 +38,13 @@ namespace RemoteCsv
         public static IDownloadService Load(CancellationToken cancellationToken, params IRemoteCsvData[] dataArray)
         {
 #if UNITASK_INSTALLED
-            return new UniTaskDownloadService(cancellationToken, dataArray); 
+            return new UniTaskDownloadService(cancellationToken, dataArray);
+#endif
+
+#if UNITY_EDITOR
+#pragma warning disable CS0162
+            return new EditorCoroutineDownloadService(cancellationToken, dataArray);
+#pragma warning restore CS0162
 #endif
         }
     }
