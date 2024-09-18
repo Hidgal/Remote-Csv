@@ -13,10 +13,6 @@
 </details>
 
 ## Installation
-##### Dependencies:
-You need to Install **[UniTask by Cysharp](https://github.com/Cysharp/UniTask "UniTask")** via **Unity Package Manager** before this package
-##### How To Install:
-
  - Go to **Package Manager**
  - Press **+** and select **Add package from git URL...**
 
@@ -24,11 +20,12 @@ Paste following link in field:
 ```
 https://github.com/Hidgal/Remote-Csv.git
 ```
+> Note: It`s recomended to install **[UniTask by Cysharp](https://github.com/Cysharp/UniTask "UniTask")** via **Unity Package Manager** for better perfomance and code safety.
 
 ## Terminology
 **Row** - horizontal line of data in CSV document. In Sheets marked as number on side bar.
 
-**Column** - vertical line of data in CSV document. In Sheets marked as Letter on top bar.
+**Column** - vertical line of data in CSV document. In Sheets marked as letter on top bar.
 
 ## How it works
 The parser downloads the CSV file from the URL and places it in a special folder (**Assets/RemoteCsv** by default). The file will have the same name as the **ScriptableObject** associated with it.
