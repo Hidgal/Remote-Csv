@@ -57,6 +57,13 @@ namespace RemoteCsv.Editor
                 var listInstance = ScriptableObject.CreateInstance<RemoteCsvSettingsAsset>();
                 listInstance.CreateDataArray();
 
+                var absoluteResourcesPath = Path.Combine(Application.dataPath, "Resources");
+                if (!Directory.Exists(absoluteResourcesPath))
+                {
+                    Directory.CreateDirectory(absoluteResourcesPath);
+                    AssetDatabase.Refresh();
+                }
+
                 var path = Path.Combine("Assets", "Resources", $"{RemoteCsvSettingsAsset.DEFAULT_LIST_NAME}.asset");
                 path = AssetDatabase.GenerateUniqueAssetPath(path);
 
