@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Threading;
+using RemoteCsv.Settings;
 using UnityEngine.Networking;
 
 namespace RemoteCsv.Internal.Download.CoroutineLoader
 {
     public class CoroutineDownloadOperation : AbstractDownloadOperation
     {
-        public CoroutineDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
-            : base(index, remoteScriptable, token, forceParseData) { }
+        public CoroutineDownloadOperation(RemoteCsvSettings settings, int index, IRemoteCsvData remoteScriptable, CancellationToken token)
+            : base(settings, index, remoteScriptable, token) { }
         
         public IEnumerator LoadData()
         {
@@ -19,7 +20,7 @@ namespace RemoteCsv.Internal.Download.CoroutineLoader
 
             if (!IsRequestValid()) yield break;
 
-            yield return UpdateFile();
+            yield return SaveResult();
 
             FinishLoading();
         }

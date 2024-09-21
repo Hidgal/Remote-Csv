@@ -1,6 +1,4 @@
 using UnityEngine;
-using RemoteCsv.Internal.Extensions;
-
 
 #if UNITY_EDITOR
 using System.IO;
@@ -20,7 +18,6 @@ namespace RemoteCsv.Internal
 #if UNITY_EDITOR
         //Name for better view in inspector
         [HideInInspector]
-        [SerializeField]
         public string Name;
 
         [HideInInspector]
@@ -28,8 +25,6 @@ namespace RemoteCsv.Internal
         private Object _dataAsset;
 #endif
 
-        [SerializeField]
-        private bool _autoParseAfterLoad;
         [SerializeField]
         private ScriptableObject _targetScriptable;
         [SerializeField]
@@ -42,23 +37,21 @@ namespace RemoteCsv.Internal
         [SerializeField]
         private string _fileName;
 
-
         public ScriptableObject TargetScriptable => _targetScriptable;
         public string FileName => _fileName;
         public string Url => _url;
         public string Extension => FILE_EXTENSION;
         public string Hash => _hash;
-        public bool AutoParseAfterLoad => _autoParseAfterLoad;
 
-        public RemoteCsvData()
-        {
-            _autoParseAfterLoad = true;
-        }
         public RemoteCsvData(ScriptableObject targetScriptable)
         {
             _targetScriptable = targetScriptable;
-            _autoParseAfterLoad = true;
             UpdateFileName();
+        }
+
+        public void UpdateHash(string hash)
+        {
+            _hash = hash;
         }
 
 #if UNITY_EDITOR
@@ -96,23 +89,5 @@ namespace RemoteCsv.Internal
             Name = ObjectNames.NicifyVariableName(_fileName);
         }
 #endif
-
-        public void UpdateHash()
-        {
-#if UNITY_EDITOR
-            _dataAsset = AssetDatabase.LoadAssetAtPath<Object>(this.GetAssetPath());
-
-            if (_dataAsset)
-            {
-                var data = File.ReadAllText(this.GetFilePath());
-                _hash = FileExtensions.GetHash(data);
-            }
-
-            if (_targetScriptable)
-            {
-                EditorUtility.SetDirty(_targetScriptable); 
-            }
-#endif
-        }
     }
 }

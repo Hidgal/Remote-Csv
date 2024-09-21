@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
-using System.Threading;
+using RemoteCsv.Settings;
 using Unity.EditorCoroutines.Editor;
 
 namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
@@ -9,8 +9,8 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
     {
         private EditorCoroutine _downloadRoutine;
 
-        public EditorCoroutineDownloadService(CancellationToken token = default, params IRemoteCsvData[] remotes)
-            : base(token, remotes) { }
+        public EditorCoroutineDownloadService(RemoteCsvSettings settings, params IRemoteCsvData[] remotes)
+            : base(settings, remotes) { }
 
         protected override void StartLoadingInternal()
         {
@@ -30,18 +30,19 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
 
         private IEnumerator LoadData()
         {
-            var loadOperations = new IEnumerator[_remotes.Count];
-            for (int i = 0; i < _remotes.Count; i++)
+            var coroutineArray = new IEnumerator[_remotes.Length];
+            for (int i = 0; i < _remotes.Length; i++)
             {
                 if (_remotes[i] == null) continue;
 
-                var operation = new EditorCoroutineDownloadOperation(i, _remotes[i], _cts.Token, _forceRefreshLocalData);
-                loadOperations[i] = operation.LoadData();
+                var operation = new EditorCoroutineDownloadOperation(_settings, i, _remotes[i], _cts.Token);
+                _operations[i] = operation;
+                coroutineArray[i] = operation.LoadData();
             }
 
-            for (int i = 0; i < loadOperations.Length; i++)
+            for (int i = 0; i < coroutineArray.Length; i++)
             {
-                yield return loadOperations[i];
+                yield return coroutineArray[i];
             }
 
             OnLoadingFinished();

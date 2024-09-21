@@ -8,7 +8,7 @@ namespace RemoteCsv.Settings
         private const string DEFAULT_SAVE_FOLDER_PATH = "RemoteCsv";
 
         [SerializeField]
-        private bool _saveCsvAssetsAfterLoad = true;
+        private bool _saveCsvAssetsAfterLoad = false;
         [SerializeField]
         private string _saveFolderPath = DEFAULT_SAVE_FOLDER_PATH;
 
