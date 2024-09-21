@@ -104,9 +104,14 @@ namespace RemoteCsv.Internal.Download
             var resultLogBuilder = new StringBuilder();
 
             if (string.IsNullOrEmpty(_resultLog))
-                _resultLog = string.IsNullOrEmpty(_dataHash) ? "downloaded" : "updated";
+            {
+                if (_settings.SaveAssetsAfterLoad)
+                    _resultLog = string.IsNullOrEmpty(_dataHash) ? "downloaded" : "updated";
+                else
+                    _resultLog = "downloaded";
+            }
 
-            resultLogBuilder.AppendLine($"[{_index}] {_name}: {_resultLog}");
+            resultLogBuilder.AppendLine($"Data for [{_index}] {_name} {_resultLog}");
 
             if(_settings.SaveAssetsAfterLoad)
                 resultLogBuilder.AppendLine($"File Path: {_filePath}");

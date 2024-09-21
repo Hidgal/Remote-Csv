@@ -25,7 +25,7 @@ namespace RemoteCsv.Editor
             Logger.Log($"Found {RemoteCsvSettingsAsset.Instance.Data.Length} remote assets in project. Start loading data...");
 
             _service?.Dispose();
-            _service = RemoteCsv.LoadAndParse(Application.exitCancellationToken, RemoteCsvSettingsAsset.Instance.Data);
+            _service = RemoteCsvService.LoadAndParse(Application.exitCancellationToken, RemoteCsvSettingsAsset.Instance.Data);
             _service.Start();
         }
 
@@ -35,7 +35,7 @@ namespace RemoteCsv.Editor
             var type = command.context.GetType();
             if (RemoteCsvTypeUtility.IsAvailableType(type))
             {
-                var service = RemoteCsv.LoadAndParse(Application.exitCancellationToken, command.context as ScriptableObject);
+                var service = RemoteCsvService.LoadAndParse(Application.exitCancellationToken, command.context as ScriptableObject);
                 service.Start();
             }
             else

@@ -103,6 +103,7 @@ namespace RemoteCsv
 
         protected void CallFinish()
         {
+            Logger.Log("All processes finished.");
             _isFinished = true;
             OnFinished?.Invoke();
         }

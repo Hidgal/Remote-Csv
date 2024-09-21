@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace RemoteCsv
 {
-    public static class RemoteCsv
+    public static class RemoteCsvService
     {
         public static IRemoteCsvService LoadAndParse(params ScriptableObject[] scriptables)
         {
