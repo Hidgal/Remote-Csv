@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using RemoteCsv.Internal.Extensions;
-using RemoteCsv.Internal.Parsers;
 using UnityEngine.Networking;
 
 namespace RemoteCsv.Internal.Download
@@ -40,11 +39,17 @@ namespace RemoteCsv.Internal.Download
         {
             if (_remoteData.AutoParseAfterLoad || _forceParseData)
             {
-                RemoteCsvParser.ParseObject(_remoteData.TargetScriptable, _remoteData.GetFilePath());
+                if (RemoteCsvParser.ParseObject(_remoteData.TargetScriptable, _remoteData.GetFilePath()))
+                {
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(_remoteData.TargetScriptable); 
+#endif
+                }
+
             }
 
             _request.Dispose();
-            _remoteData.OnDataLoaded();
+            _remoteData.UpdateHash();
 
             LogResult();
         }
