@@ -40,7 +40,7 @@ namespace RemoteCsv.Internal.Download
         {
             if (_remoteData.AutoParseAfterLoad || _forceParseData)
             {
-                ObjectParser.ParseObject(_remoteData.TargetScriptable, _remoteData.GetFilePath());
+                RemoteCsvParser.ParseObject(_remoteData.TargetScriptable, _remoteData.GetFilePath());
             }
 
             _request.Dispose();

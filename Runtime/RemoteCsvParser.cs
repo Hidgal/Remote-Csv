@@ -1,12 +1,14 @@
+using RemoteCsv.Internal;
 using RemoteCsv.Internal.Extensions;
+using RemoteCsv.Internal.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using yutokun;
 
-namespace RemoteCsv.Internal.Parsers
+namespace RemoteCsv
 {
-    public class ObjectParser
+    public class RemoteCsvParser
     {
         /// <returns><see langword="true"/> if one or more fields was parsed</returns>
         public static bool ParseObject(object obj, string cvsPath)
@@ -14,6 +16,13 @@ namespace RemoteCsv.Internal.Parsers
             var data = CSVParser.LoadFromPath(cvsPath);
             int rowIndex = 0;
             return ParseObject(ref obj, data, ref rowIndex);
+        }
+
+        /// <returns><see langword="true"/> if one or more fields was parsed</returns>
+        public static bool ParseObject(ref object obj, in List<List<string>> data)
+        {
+            int rowIndex = 0;
+            return ParseObject(ref obj, in data, ref rowIndex);
         }
 
         /// <returns><see langword="true"/> if one or more fields was parsed</returns>
