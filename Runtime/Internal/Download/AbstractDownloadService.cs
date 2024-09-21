@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using RemoteCsv.Settings;
+using System.Collections.Generic;
 
 namespace RemoteCsv.Internal.Download
 {
@@ -11,6 +12,7 @@ namespace RemoteCsv.Internal.Download
 
         protected readonly bool _forceRefreshLocalData;
         protected readonly IReadOnlyList<IRemoteCsvData> _remotes;
+        protected readonly RemoteCsvSettings _settings;
 
         protected CancellationTokenSource _cts;
         protected bool _isCompleted;
@@ -26,6 +28,8 @@ namespace RemoteCsv.Internal.Download
             _remotes = remotes;
             token.Register(OnRootTokenCancel);
             _cts = CancellationTokenSource.CreateLinkedTokenSource(token);
+
+            _settings = RemoteCsvSettingsAsset.Instance.Settings;
 
             StartLoading();
         }

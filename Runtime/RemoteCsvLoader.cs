@@ -1,7 +1,7 @@
 using Logger = RemoteCsv.Internal.Logger;
+using RemoteCsv.Settings;
 using System.Collections.Generic;
 using System.Threading;
-using RemoteCsv.Internal;
 using UnityEngine;
 
 using RemoteCsv.Internal.Download.CoroutineLoader;
@@ -50,14 +50,14 @@ namespace RemoteCsv
 
         private static IRemoteCsvData[] GetDataFromScriptables(ScriptableObject[] scriptables)
         {
-            if (RemoteScriptablesList.Instance)
+            if (RemoteCsvSettingsAsset.Instance)
             {
                 List<IRemoteCsvData> dataList = new();
                 foreach (var scriptable in scriptables)
                 {
                     if (!scriptable) continue;
 
-                    var data = RemoteScriptablesList.Instance.GetDataByScriptable(scriptable);
+                    var data = RemoteCsvSettingsAsset.Instance.GetDataByScriptable(scriptable);
 
                     if (data != null)
                         dataList.Add(data);

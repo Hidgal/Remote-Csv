@@ -19,7 +19,7 @@ namespace RemoteCsv
         }
 
         /// <returns><see langword="true"/> if one or more fields was parsed</returns>
-        public static bool ParseObject(ref object obj, in List<List<string>> data)
+        public static bool ParseObject(object obj, in List<List<string>> data)
         {
             int rowIndex = 0;
             return ParseObject(ref obj, in data, ref rowIndex);
@@ -28,6 +28,8 @@ namespace RemoteCsv
         /// <returns><see langword="true"/> if one or more fields was parsed</returns>
         public static bool ParseObject(ref object obj, in List<List<string>> data, ref int rowIndex)
         {
+            if (obj == null) return false;
+
             IFieldParser parser;
             bool fieldResult;
             bool result = false;

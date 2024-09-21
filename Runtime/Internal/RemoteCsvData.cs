@@ -15,7 +15,7 @@ namespace RemoteCsv.Internal
         , ISerializationCallbackReceiver
 #endif
     {
-        private const string _extension = ".csv";
+        private const string FILE_EXTENSION = ".csv";
 
 #if UNITY_EDITOR
         //Name for better view in inspector
@@ -46,11 +46,10 @@ namespace RemoteCsv.Internal
         public ScriptableObject TargetScriptable => _targetScriptable;
         public string FileName => _fileName;
         public string Url => _url;
-        public string Extension => _extension;
+        public string Extension => FILE_EXTENSION;
         public string Hash => _hash;
         public bool AutoParseAfterLoad => _autoParseAfterLoad;
 
-#if UNITY_EDITOR
         public RemoteCsvData()
         {
             _autoParseAfterLoad = true;
@@ -62,6 +61,7 @@ namespace RemoteCsv.Internal
             UpdateFileName();
         }
 
+#if UNITY_EDITOR
         public void OnAfterDeserialize() { }
         public void OnBeforeSerialize()
         {
@@ -97,7 +97,7 @@ namespace RemoteCsv.Internal
         }
 #endif
 
-        public void OnDataLoaded()
+        public void UpdateHash()
         {
 #if UNITY_EDITOR
             _dataAsset = AssetDatabase.LoadAssetAtPath<Object>(this.GetAssetPath());

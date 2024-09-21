@@ -31,6 +31,6 @@ namespace RemoteCsv
 
         public bool AutoParseAfterLoad { get; }
 
-        void OnDataLoaded(); 
+        void UpdateHash(); 
     }
 }
