@@ -1,13 +1,12 @@
 #if UNITASK_INSTALLED
-using System.Threading;
 using Cysharp.Threading.Tasks;
+using RemoteCsv.Settings;
 
 namespace RemoteCsv.Internal.Download.UniTaskLoader
 {
     public class UniTaskDownloadService : AbstractDownloadService
     {
-        public UniTaskDownloadService(CancellationToken token = default, params IRemoteCsvData[] remotes)
-            : base(token, remotes) { }
+        public UniTaskDownloadService(RemoteCsvSettings settings, params IRemoteCsvData[] remotes) : base(settings, remotes) { }
 
         protected override void StartLoadingInternal()
         {
@@ -16,16 +15,17 @@ namespace RemoteCsv.Internal.Download.UniTaskLoader
 
         private async UniTaskVoid LoadData()
         {
-            var loadOperations = new UniTask[_remotes.Count];
-            for (int i = 0; i < _remotes.Count; i++)
+            var tasks = new UniTask[_remotes.Length];
+            for (int i = 0; i < _remotes.Length; i++)
             {
                 if (_remotes[i] == null) continue;
 
-                var operation = new UniTaskDownloadOperation(i, _remotes[i], _cts.Token, _forceRefreshLocalData);
-                loadOperations[i] = operation.LoadData();
+                var operation = new UniTaskDownloadOperation(_settings, i, _remotes[i], _cts.Token);
+                _operations[i] = operation;
+                tasks[i] = operation.LoadData();
             }
 
-            await UniTask.WhenAll(loadOperations);
+            await UniTask.WhenAll(tasks);
 
             OnLoadingFinished();
         }

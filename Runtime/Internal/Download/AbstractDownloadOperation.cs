@@ -3,20 +3,20 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using RemoteCsv.Internal.Extensions;
-using RemoteCsv.Internal.Parsers;
+using RemoteCsv.Settings;
 using UnityEngine.Networking;
 
 namespace RemoteCsv.Internal.Download
 {
-    public abstract class AbstractDownloadOperation
+    public abstract class AbstractDownloadOperation : IDownloadOperation
     {
+        protected readonly RemoteCsvSettings _settings;
         protected readonly CancellationToken _token;
         protected readonly IRemoteCsvData _remoteData;
-        protected readonly bool _forceParseData;
         protected readonly int _index;
 
+        protected DownloadResult _result;
         protected UnityWebRequest _request;
-        protected string _currentHash;
         protected string _resultLog;
         protected string _filePath;
         protected string _url;
@@ -25,45 +25,23 @@ namespace RemoteCsv.Internal.Download
         protected string _dataHash => _remoteData.Hash;
         protected string _fileNameWithExtension => _remoteData.Extension;
 
-        public AbstractDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
+        public DownloadResult Result => _result == null ? new() : _result;
+
+        public AbstractDownloadOperation(RemoteCsvSettings settings, int index, IRemoteCsvData remoteScriptable, CancellationToken token)
         {
             _index = index;
             _token = token;
+            _settings = settings;
             _remoteData = remoteScriptable;
-            _forceParseData = forceParseData;
 
-            if(_remoteData != null)
+            if (_remoteData != null)
                 _url = GoogleUrlValidator.ValidateUrl(_remoteData.Url);
         }
 
         protected void FinishLoading()
         {
-            if (_remoteData.AutoParseAfterLoad || _forceParseData)
-            {
-                ObjectParser.ParseObject(_remoteData.TargetScriptable, _remoteData.GetFilePath());
-            }
-
-            _request.Dispose();
-            _remoteData.OnDataLoaded();
-
             LogResult();
-        }
-
-        protected bool IsHashChanged()
-        {
-            if (!string.IsNullOrEmpty(_currentHash))
-            {
-                var hashSum = FileExtensions.GetHash(_request.downloadHandler.data);
-
-                //No need to import asset if hashes are equal
-                if (_currentHash == hashSum)
-                {
-                    _resultLog = "is already up to date";
-                    return false;
-                }
-            }
-
-            return true;
+            _request.Dispose();
         }
 
         protected void TryCreateDirectory()
@@ -72,32 +50,6 @@ namespace RemoteCsv.Internal.Download
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
-            }
-        }
-
-        protected void ImportCsvAsset()
-        {
-#if UNITY_EDITOR
-            UnityEditor.AssetDatabase.ImportAsset(_remoteData.GetAssetPath());
-#endif
-        }
-
-        protected string GetCurrentHash()
-        {
-            if (_forceParseData)
-            {
-                if (File.Exists(_filePath))
-                {
-                    return FileExtensions.GetHash(File.ReadAllBytes(_filePath));
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-            else
-            {
-                return _dataHash;
             }
         }
 
@@ -152,34 +104,48 @@ namespace RemoteCsv.Internal.Download
             var resultLogBuilder = new StringBuilder();
 
             if (string.IsNullOrEmpty(_resultLog))
-                _resultLog = string.IsNullOrEmpty(_currentHash) ? "downloaded" : "updated";
+            {
+                if (_settings.SaveAssetsAfterLoad)
+                    _resultLog = string.IsNullOrEmpty(_dataHash) ? "downloaded" : "updated";
+                else
+                    _resultLog = "downloaded";
+            }
 
-            resultLogBuilder.AppendLine($"[{_index}] {_name}: {_resultLog}");
-            resultLogBuilder.AppendLine($"File Path: {_filePath}");
+            resultLogBuilder.AppendLine($"Data for [{_index}] {_name} {_resultLog}");
+
+            if(_settings.SaveAssetsAfterLoad)
+                resultLogBuilder.AppendLine($"File Path: {_filePath}");
 
 #if UNITY_EDITOR
-            var size = FileExtensions.GetSizeString((ulong)new FileInfo(_filePath).Length);
+            var dataBytesCount = _request.downloadHandler.data == null ? 0 : _request.downloadHandler.data.Length;
+            var size = FileExtensions.GetSizeString((ulong)dataBytesCount);
             resultLogBuilder.AppendLine($"Download Size: {size}");
 #endif
 
             Logger.Log(resultLogBuilder.ToString());
         }
 
-        protected async Task UpdateFile()
+        protected async Task SaveResult()
         {
-            _filePath = _remoteData.GetFilePath();
-            _currentHash = GetCurrentHash();
+            var newHash = FileExtensions.GetHash(_request.downloadHandler.data);
+            _result = new(_request.downloadHandler.data, newHash);
 
-            if (!IsHashChanged()) return;
+            if (_settings.SaveAssetsAfterLoad)
+            {
+                if (_remoteData.Hash == newHash) return;
+                
+                _filePath = _remoteData.GetFilePath();
+                TryCreateDirectory();
 
-            TryCreateDirectory();
+                if (_request.downloadHandler.data != null)
+                    await File.WriteAllBytesAsync(_filePath, _request.downloadHandler.data, cancellationToken: _token);
+                else
+                    await File.WriteAllTextAsync(_filePath, string.Empty, cancellationToken: _token);
 
-            if (_request.downloadHandler.data != null)
-                await File.WriteAllBytesAsync(_filePath, _request.downloadHandler.data, cancellationToken: _token);
-            else
-                await File.WriteAllTextAsync(_filePath, string.Empty, cancellationToken: _token);
-
-            ImportCsvAsset();
+#if UNITY_EDITOR
+                UnityEditor.AssetDatabase.ImportAsset(_remoteData.GetAssetPath());
+#endif
+            }
         }
     }
 }
