@@ -1,6 +1,6 @@
 {
   "name": "com.hidgal.remote-csv",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "displayName": "Remote Csv",
   "dependencies": {
     "com.unity.editorcoroutines": "1.0.0"
