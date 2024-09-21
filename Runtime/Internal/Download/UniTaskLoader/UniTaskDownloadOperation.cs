@@ -1,14 +1,15 @@
 ﻿#if UNITASK_INSTALLED
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using RemoteCsv.Settings;
 using UnityEngine.Networking;
 
 namespace RemoteCsv.Internal.Download.UniTaskLoader
 {
     public class UniTaskDownloadOperation : AbstractDownloadOperation
     {
-        public UniTaskDownloadOperation(int index, IRemoteCsvData remoteScriptable, CancellationToken token, bool forceParseData)
-            : base(index, remoteScriptable, token, forceParseData) { }
+        public UniTaskDownloadOperation(RemoteCsvSettings settings, int index, IRemoteCsvData remoteScriptable, CancellationToken token)
+            : base(settings, index, remoteScriptable, token) { }
 
         public async UniTask LoadData()
         {
@@ -20,7 +21,7 @@ namespace RemoteCsv.Internal.Download.UniTaskLoader
 
             if (!IsRequestValid()) return;
 
-            await UpdateFile().AsUniTask();
+            await SaveResult().AsUniTask();
 
             FinishLoading();
         }

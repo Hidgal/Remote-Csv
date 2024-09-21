@@ -26,6 +26,15 @@ namespace RemoteCsv
         }
 
         /// <returns><see langword="true"/> if one or more fields was parsed</returns>
+        public static bool ParseObject(object obj, byte[] data)
+        {
+            var dataString = System.Text.Encoding.Default.GetString(data);
+            var dataList = CSVParser.LoadFromString(dataString);
+            int rowIndex = 0;
+            return ParseObject(ref obj, in dataList, ref rowIndex);
+        }
+
+        /// <returns><see langword="true"/> if one or more fields was parsed</returns>
         public static bool ParseObject(ref object obj, in List<List<string>> data, ref int rowIndex)
         {
             if (obj == null) return false;

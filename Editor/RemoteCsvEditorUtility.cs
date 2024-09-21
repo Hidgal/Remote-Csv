@@ -1,13 +1,13 @@
+using Logger = RemoteCsv.Internal.Logger;
 using RemoteCsv.Settings;
 using UnityEditor;
 using UnityEngine;
-using Logger = RemoteCsv.Internal.Logger;
 
 namespace RemoteCsv.Editor
 {
     public static class RemoteCsvEditorUtility
     {
-        private static IDownloadService _downloadService;
+        private static IRemoteCsvService _service;
 
         [MenuItem("Tools/Remote Csv/Refresh All")]
         public static void RefreshAll()
@@ -24,8 +24,9 @@ namespace RemoteCsv.Editor
 
             Logger.Log($"Found {RemoteCsvSettingsAsset.Instance.Data.Length} remote assets in project. Start loading data...");
 
-            _downloadService?.Dispose();
-            _downloadService = RemoteCsvLoader.Load(Application.exitCancellationToken, RemoteCsvSettingsAsset.Instance.Data);
+            _service?.Dispose();
+            _service = RemoteCsv.LoadAndParse(Application.exitCancellationToken, RemoteCsvSettingsAsset.Instance.Data);
+            _service.Start();
         }
 
         [MenuItem("CONTEXT/ScriptableObject/Parse From Csv")]
@@ -34,7 +35,8 @@ namespace RemoteCsv.Editor
             var type = command.context.GetType();
             if (RemoteCsvTypeUtility.IsAvailableType(type))
             {
-                RemoteCsvLoader.Load(Application.exitCancellationToken, command.context as ScriptableObject);
+                var service = RemoteCsv.LoadAndParse(Application.exitCancellationToken, command.context as ScriptableObject);
+                service.Start();
             }
             else
             {
