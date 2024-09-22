@@ -14,6 +14,7 @@ namespace RemoteCsv.Internal.Parsers
         private static Dictionary<Type, IFieldParser> _defaultTypeParsers = new()
         {
             { typeof(int), new IntParser() },
+            { typeof(bool), new BoolParser() },
             { typeof(float), new FloatParser() },
             { typeof(string), new StringParser() }
         };
