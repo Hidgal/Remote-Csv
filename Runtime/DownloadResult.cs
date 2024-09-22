@@ -14,6 +14,7 @@
         {
             _isLoaded = false;
             _data = new byte[0];
+            _hash = string.Empty;
         }
 
         public DownloadResult(byte[] data, string hash)

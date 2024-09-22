@@ -7,10 +7,9 @@ namespace RemoteCsv.Internal.Parsers
 {
     public class FloatParser : IFieldParser
     {
-        public bool ParseField(object obj, FieldInfo field, in List<List<string>> data, ref int lastRowIndex)
+        public bool ParseField(object obj, FromCsvAttribute attribute, FieldInfo field, in List<List<string>> data, ref int lastRowIndex)
         {
-            var attribute = field.GetCsvAttribute();
-            var result = ParseValue(attribute.Column, attribute.Row, attribute.ItemsCount, in data, ref lastRowIndex, out var value);
+            var result = ParseValue(attribute, in data, ref lastRowIndex, out var value);
 
             if (result)
                 field.SetValue(obj, value);
@@ -18,9 +17,10 @@ namespace RemoteCsv.Internal.Parsers
             return result;
         }
 
-        public bool ParseValue(int columnIndex, int rowIndex, int itemsCount, in List<List<string>> data, ref int lastRowIndex, out object value, Type type = null)
+        public bool ParseValue(FromCsvAttribute attribute, in List<List<string>> data, ref int lastRowIndex, out object value, Type type = null)
         {
-            rowIndex = this.GetActualRowIndex(rowIndex, ref lastRowIndex);
+            var rowIndex = this.GetActualRowIndex(attribute.RowIndex, ref lastRowIndex);
+            var columnIndex = attribute.ColumnIndex;
 
             if (rowIndex < data.Count)
             {
