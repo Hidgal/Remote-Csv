@@ -1,5 +1,6 @@
-using System.IO;
+using RemoteCsv.Settings;
 using UnityEngine;
+using System.IO;
 
 namespace RemoteCsv.Internal.Extensions
 {
@@ -15,7 +16,7 @@ namespace RemoteCsv.Internal.Extensions
 
         public static string GetFilePath(this IRemoteCsvData remoteData)
         {
-            return Path.Combine(Application.dataPath, RemoteScriptablesList.Instance.DownloadFolderPath, remoteData.FileName + remoteData.Extension);
+            return Path.Combine(Application.dataPath, RemoteCsvSettingsAsset.Instance.Settings.FolderPath, remoteData.FileName + remoteData.Extension);
         }
     }
 }

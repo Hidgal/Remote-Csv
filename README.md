@@ -62,6 +62,9 @@ In case of collections, only array is supported.
 **itemsCount** - (optional for array) override items count to parse in array. By default the parser goes through all rows ​​up to the end of the document.
 
 ## Examples
+<details>
+<summary>[FromCsv] Attribute usage examples</summary>
+  
 1. Simple int value and array int[] to parse
 ```csharp
 [SerializeField]
@@ -121,3 +124,5 @@ private int _anotherIntValue;
 private float _floatValue;
 ```
 ![Parse Result](https://i.imgur.com/HxGt5Oo.png "Parse Result")
+
+</details>

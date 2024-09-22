@@ -1,4 +1,5 @@
 using System.Collections;
+using RemoteCsv.Settings;
 using UnityEngine;
 
 namespace RemoteCsv.Internal.Download.CoroutineLoader
@@ -9,8 +10,8 @@ namespace RemoteCsv.Internal.Download.CoroutineLoader
 
         private Coroutine _downloadRoutine;
 
-        public CoroutineDownloadService(MonoBehaviour coroutineRunner, params IRemoteCsvData[] remotes)
-            : base(default, remotes)
+        public CoroutineDownloadService(RemoteCsvSettings settings, MonoBehaviour coroutineRunner, params IRemoteCsvData[] remotes)
+            : base(settings, remotes)
         {
             _coroutineRunner = coroutineRunner;
         }
@@ -41,18 +42,19 @@ namespace RemoteCsv.Internal.Download.CoroutineLoader
 
         private IEnumerator LoadData()
         {
-            var loadOperations = new IEnumerator[_remotes.Count];
-            for (int i = 0; i < _remotes.Count; i++)
+            var coroutineArray = new IEnumerator[_remotes.Length];
+            for (int i = 0; i < _remotes.Length; i++)
             {
                 if (_remotes[i] == null) continue;
 
-                var operation = new CoroutineDownloadOperation(i, _remotes[i], _cts.Token, _forceRefreshLocalData);
-                loadOperations[i] = operation.LoadData();
+                var operation = new CoroutineDownloadOperation(_settings, i, _remotes[i], _cts.Token);
+                _operations[i] = operation;
+                coroutineArray[i] = operation.LoadData();
             }
 
-            for (int i = 0; i < loadOperations.Length; i++)
+            for (int i = 0; i < coroutineArray.Length; i++)
             {
-                yield return loadOperations[i];
+                yield return coroutineArray[i];
             }
 
             OnLoadingFinished();
