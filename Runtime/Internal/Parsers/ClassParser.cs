@@ -7,10 +7,9 @@ namespace RemoteCsv.Internal.Parsers
 {
     public class ClassParser : IFieldParser
     {
-        public bool ParseField(object obj, FieldInfo field, in List<List<string>> data, ref int lastRowIndex)
+        public bool ParseField(object obj, FromCsvAttribute attribute, FieldInfo field, in List<List<string>> data, ref int lastRowIndex)
         {
-            var attribute = field.GetCsvAttribute();
-            var result = ParseValue(attribute.Column, attribute.Row, attribute.ItemsCount, in data, ref lastRowIndex, out var value, obj.GetType());
+            var result = ParseValue(attribute, in data, ref lastRowIndex, out var value, obj.GetType());
 
             if (result)
                 field.SetValue(obj, value);
@@ -18,11 +17,12 @@ namespace RemoteCsv.Internal.Parsers
             return result;
         }
 
-        public bool ParseValue(int columnIndex, int rowIndex, int rowEndIndex, in List<List<string>> data, ref int lastRowIndex, out object value, Type type = null)
+        public bool ParseValue(FromCsvAttribute attribute, in List<List<string>> data, ref int lastRowIndex, out object value, Type type = null)
         {
             if(type != null)
             {
-                rowIndex = this.GetActualRowIndex(rowIndex, ref lastRowIndex);
+                var rowIndex = this.GetActualRowIndex(attribute.RowIndex, ref lastRowIndex);
+                var columnIndex = attribute.ColumnIndex;
 
                 if (rowIndex < data.Count)
                 {
@@ -30,7 +30,6 @@ namespace RemoteCsv.Internal.Parsers
                     {
                         IFieldParser parser;
                         bool result = false;
-                        var savedRowIndex = lastRowIndex;
                         value = Activator.CreateInstance(type);
                         var fields = type.GetFieldsWithCsvAttribute();
 
@@ -38,8 +37,9 @@ namespace RemoteCsv.Internal.Parsers
                         {
                             try
                             {
-                                parser = ParserContainer.GetParser(field);
-                                result |= parser.ParseField(value, field, in data, ref rowIndex);
+                                attribute = field.GetCsvAttribute();
+                                parser = ParserContainer.GetParser(field, attribute);
+                                result |= parser.ParseField(value, attribute, field, in data, ref rowIndex);
                                 rowIndex--;
                             }
                             catch (Exception e)

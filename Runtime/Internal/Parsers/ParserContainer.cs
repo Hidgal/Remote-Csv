@@ -18,8 +18,8 @@ namespace RemoteCsv.Internal.Parsers
             { typeof(string), new StringParser() }
         };
 
-        public static IFieldParser GetParser(FieldInfo field) => GetParser(field.FieldType);
-        public static IFieldParser GetParser(Type type)
+        public static IFieldParser GetParser(FieldInfo field, FromCsvAttribute attribute = null) => GetParser(field.FieldType, attribute);
+        public static IFieldParser GetParser(Type type, FromCsvAttribute attribute = null)
         {
             if (_defaultTypeParsers.TryGetValue(type, out var parser))
             {
@@ -32,6 +32,12 @@ namespace RemoteCsv.Internal.Parsers
                     return _arrayParser;
                 else
                     throw new Exception("Lists and other generic collections are not supported. Use array instead.");
+            }
+
+            if (attribute != null)
+            {
+                if (attribute.CustomParserType != null)
+                    return Activator.CreateInstance(attribute.CustomParserType) as IFieldParser;
             }
 
             return _classParser;
