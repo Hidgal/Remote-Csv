@@ -65,6 +65,9 @@ namespace RemoteCsv
                 }
             }
 
+            if (obj is IParsingEndCallbackHandler handler)
+                handler.OnParsingEnd(result);
+
             Logger.Log($"Finish parsing of {objectType.Name} process...");
             return result;
         }
