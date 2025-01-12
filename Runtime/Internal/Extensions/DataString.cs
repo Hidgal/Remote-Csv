@@ -5,7 +5,8 @@ namespace RemoteCsv.Internal.Extensions
         public static string FormatForNumbers(in string dataString)
         {
             return dataString
-                .Replace("%", "");
+                .Replace("%", "")
+                .Replace(".", ",");
         }
     }
 }
