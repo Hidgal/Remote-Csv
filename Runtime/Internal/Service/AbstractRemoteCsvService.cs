@@ -2,6 +2,7 @@ using RemoteCsv.Internal.Extensions;
 using Logger = RemoteCsv.Internal.Logger;
 using RemoteCsv.Settings;
 using System;
+using System.IO;
 
 namespace RemoteCsv
 {
@@ -60,12 +61,6 @@ namespace RemoteCsv
 
         protected void OnDownloadFinished()
         {
-            if (!_downloadService.IsSuccessed)
-            {
-                Logger.LogError("Can`t start parsing - no data loaded!");
-                return;
-            }
-
             bool parseResult;
             for (int i = 0; i < _remotes.Length; i++)
             {
@@ -74,11 +69,26 @@ namespace RemoteCsv
 
                 if (_settings.SaveAssetsAfterLoad)
                 {
-                    parseResult = RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, _remotes[i].GetFilePath());
+                    string filePath = _remotes[i].GetFilePath();
+                    if (_downloadService.IsSuccessed && string.IsNullOrEmpty(filePath) == false && File.Exists(filePath))
+                    {
+                        parseResult = RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, filePath);
+                    }
+                    else
+                    {
+                        parseResult = false;
+                    }
                 }
                 else
                 {
-                    parseResult = RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, _downloadService.Result[i].Data);
+                    if (_downloadService.IsSuccessed)
+                    {
+                        parseResult = RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, _downloadService.Result[i].Data);
+                    }
+                    else
+                    {
+                        parseResult = false;
+                    }
                 }
 
                 if (_settings.SaveAssetsAfterLoad && parseResult)
