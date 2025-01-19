@@ -5,14 +5,12 @@ namespace RemoteCsv.Settings
     [System.Serializable]
     public class RemoteCsvSettings
     {
-        private const string DEFAULT_SAVE_FOLDER_PATH = "RemoteCsv";
-
         [SerializeField]
-        private bool _saveCsvAssetsAfterLoad = false;
+        private bool _saveCsvAssetsInEditor = false;
         [SerializeField]
-        private string _saveFolderPath = DEFAULT_SAVE_FOLDER_PATH;
+        private bool _saveCsvAssetsInBuilds = true;
 
-        public bool SaveAssetsAfterLoad => _saveCsvAssetsAfterLoad;
-        public string FolderPath => _saveFolderPath;
+        public bool SaveAssetsAfterLoad => Application.isEditor ? _saveCsvAssetsInEditor : _saveCsvAssetsInBuilds;
+        public string FolderPath => Application.streamingAssetsPath;
     }
 }
