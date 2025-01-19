@@ -3,9 +3,10 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 using RemoteCsv.Internal.Download.EditorCoroutineLoader;
+#endif
+
 using RemoteCsv.Internal.Utility;
 using RemoteCsv.Settings;
-#endif
 
 #if UNITASK_INSTALLED
 using RemoteCsv.Internal.Download.UniTaskLoader;

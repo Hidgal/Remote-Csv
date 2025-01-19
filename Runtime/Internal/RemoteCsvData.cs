@@ -46,7 +46,9 @@ namespace RemoteCsv.Internal
         public RemoteCsvData(ScriptableObject targetScriptable)
         {
             _targetScriptable = targetScriptable;
-            UpdateFileName();
+#if UNITY_EDITOR
+            UpdateFileName(); 
+#endif
         }
 
         public void UpdateHash(string hash)
