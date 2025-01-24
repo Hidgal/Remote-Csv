@@ -20,8 +20,7 @@ namespace RemoteCsv.Internal.Download.CoroutineLoader
 
             if (!IsRequestValid()) yield break;
 
-            yield return SaveResult();
-
+            SaveResult();
             FinishLoading();
         }
     }

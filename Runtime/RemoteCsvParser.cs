@@ -47,7 +47,7 @@ namespace RemoteCsv
             Logger.Log($"Start parsing of {objectType.Name} process...");
 
             var fields = objectType.GetFieldsWithCsvAttribute();
-            Logger.Log($"Found {fields.Count()} fields to parse");
+            Logger.Log($"Found {fields.Count()} fields to parse for {objectType.Name}.");
 
             foreach (var field in fields)
             {
@@ -57,7 +57,6 @@ namespace RemoteCsv
                     parser = ParserContainer.GetParser(field, attribute);
                     fieldResult = parser.ParseField(obj, attribute, field, in data, ref rowIndex);
                     result |= fieldResult;
-                    Logger.Log($"Parsed field: {field.Name}, with result: {fieldResult}");
                 }
                 catch (Exception e)
                 {

@@ -2,6 +2,8 @@ using Logger = RemoteCsv.Internal.Logger;
 using RemoteCsv.Settings;
 using UnityEditor;
 using UnityEngine;
+using System.IO;
+using System.Diagnostics;
 
 namespace RemoteCsv.Editor
 {
@@ -42,6 +44,25 @@ namespace RemoteCsv.Editor
             {
                 Logger.LogError($"No data to parse from CSV in {command.context.name} (type: {type.Name})");
             }
+        }
+
+        [MenuItem("Tools/Remote Csv/Open Downloads Folder", priority = 10)]
+        public static void OpenDownloadFolder()
+        {
+            if (RemoteCsvSettingsAsset.Instance == null)
+            {
+                Logger.LogError($"Can`t open download folder - there`s no Remote Csv Settings Asset!");
+                return;
+            }
+
+            var settings = RemoteCsvSettingsAsset.Instance.Settings;
+
+            if (Directory.Exists(settings.FolderPath) == false)
+            {
+                Directory.CreateDirectory(settings.FolderPath);
+            }
+
+            Process.Start(settings.FolderPath);
         }
     }
 }

@@ -23,12 +23,5 @@ namespace RemoteCsv
         /// Path to loaded file
         /// </summary>
         public string Extension { get; }
-
-        /// <summary>
-        /// Hash sum for checking file update
-        /// </summary>
-        public string Hash { get; }
-
-        void UpdateHash(string hash); 
     }
 }
