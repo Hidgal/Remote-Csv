@@ -38,7 +38,6 @@ namespace RemoteCsv.Internal.Parsers
                     for (int i = 0; i < array.Length; i++)
                     {
                         arrayAttribute.SetRowIndex(i + startRowIndex + 1);
-                        UnityEngine.Debug.Log($"Row index: {i + startRowIndex}");
                         isParsed |= elementParser.ParseValue(arrayAttribute, in data, ref lastRowIndex, out value, elementType);
                         array.SetValue(value, i);
                     }

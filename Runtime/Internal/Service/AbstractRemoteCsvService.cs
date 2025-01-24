@@ -59,54 +59,53 @@ namespace RemoteCsv
         protected abstract IDownloadService GetDownloadService();
         protected abstract void StartLoading();
 
+        protected void TryCreateDirectory(string filePath)
+        {
+            var directoryPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+        }
+
         protected void OnDownloadFinished()
         {
-            bool parseResult;
-            for (int i = 0; i < _remotes.Length; i++)
+            if (_downloadService.IsSuccessed)
             {
-                if (_remotes[i] == null) continue;
-                if (!_remotes[i].TargetScriptable) continue;
+                string filePath;
 
-                if (_settings.SaveAssetsAfterLoad)
+                for (int i = 0; i < _remotes.Length; i++)
                 {
-                    string filePath = _remotes[i].GetFilePath();
-                    if (_downloadService.IsSuccessed && string.IsNullOrEmpty(filePath) == false && File.Exists(filePath))
+                    if (_remotes[i] == null) continue;
+                    if (_remotes[i].TargetScriptable == false) continue;
+                    if (_downloadService.Result[i].IsLoaded == false) continue;
+
+                    filePath = _remotes[i].GetFilePath();
+
+                    if (_settings.SaveAssetsAfterLoad)
                     {
-                        parseResult = RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, filePath);
+                        if (FileExtensions.GetFileHash(filePath) == FileExtensions.GetHash(_downloadService.Result[i].Data))
+                        {
+                            continue;
+                        }
                     }
-                    else
+
+                    if (RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, _downloadService.Result[i].Data))
                     {
-                        parseResult = false;
+#if UNITY_EDITOR
+                        UnityEditor.EditorUtility.SetDirty(_remotes[i].TargetScriptable);
+#endif
+                        TryCreateDirectory(filePath);
+
+                        File.WriteAllBytes(filePath, _downloadService.Result[i].Data);
                     }
                 }
-                else
-                {
-                    if (_downloadService.IsSuccessed)
-                    {
-                        parseResult = RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, _downloadService.Result[i].Data);
-                    }
-                    else
-                    {
-                        parseResult = false;
-                    }
-                }
-
-                if (_settings.SaveAssetsAfterLoad && parseResult)
-                {
-                    _remotes[i].UpdateHash(_downloadService.Result[i].Hash);
 
 #if UNITY_EDITOR
-                    UnityEditor.EditorUtility.SetDirty(_remotes[i].TargetScriptable);
-                    UnityEditor.EditorUtility.SetDirty(RemoteCsvSettingsAsset.Instance);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
 #endif
-                }
-
             }
-
-#if UNITY_EDITOR
-            UnityEditor.AssetDatabase.SaveAssets();
-            UnityEditor.AssetDatabase.Refresh();
-#endif
 
             CallFinish();
         }

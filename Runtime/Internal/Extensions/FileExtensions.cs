@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -15,6 +16,22 @@ namespace RemoteCsv.Internal.Extensions
 
             int i = (int)(Math.Floor(Math.Log(bytesLength) / Math.Log(1024)));
             return Math.Round(bytesLength / Math.Pow(1024, i), 2) + " " + _sizeKeys[i];
+        }
+
+        public static string GetFileHash(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                using (var md5 = MD5.Create())
+                {
+                    using (var stream = File.OpenRead(filePath))
+                    {
+                        return GetHash(md5.ComputeHash(stream));
+                    }
+                }
+            }
+
+            return string.Empty;
         }
 
         // from https://github.com/MartinSchultz/unity3d/blob/master/CryptographyHelper.cs
