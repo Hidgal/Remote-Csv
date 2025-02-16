@@ -21,6 +21,7 @@ namespace RemoteCsv.Internal.Download.CoroutineLoader
             if (!_coroutineRunner)
             {
                 Logger.LogError("Can`t start loading, coroutine runner is null!");
+                Finish();
                 return;
             }
 

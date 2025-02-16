@@ -18,13 +18,9 @@ namespace RemoteCsv.Internal.Download
 
         protected DownloadResult _result;
         protected UnityWebRequest _request;
-        protected string _resultLog;
-        protected string _filePath;
         protected string _url;
 
         protected string _name => _remoteData.FileName;
-        protected string _fileNameWithExtension => _remoteData.Extension;
-
         public DownloadResult Result => _result == null ? new() : _result;
 
         public AbstractDownloadOperation(RemoteCsvSettings settings, int index, IRemoteCsvData remoteScriptable, CancellationToken token)
@@ -33,7 +29,6 @@ namespace RemoteCsv.Internal.Download
             _token = token;
             _settings = settings;
             _remoteData = remoteScriptable;
-            _filePath = _remoteData.GetFilePath();
 
             if (_remoteData != null)
                 _url = GoogleUrlValidator.ValidateUrl(_remoteData.Url);
@@ -43,15 +38,6 @@ namespace RemoteCsv.Internal.Download
         {
             LogResult();
             _request.Dispose();
-        }
-
-        protected void TryCreateDirectory()
-        {
-            var directoryPath = Path.GetDirectoryName(_filePath);
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
         }
 
         protected bool IsRequestValid()
@@ -91,31 +77,13 @@ namespace RemoteCsv.Internal.Download
                 return false;
             }
 
-            if (string.IsNullOrEmpty(_fileNameWithExtension))
-            {
-                Logger.LogError($"Invalid file path for [{_index}] {_name}");
-                return false;
-            }
-
             return true;
         }
 
         protected void LogResult()
         {
             var resultLogBuilder = new StringBuilder();
-
-            if (string.IsNullOrEmpty(_resultLog))
-            {
-                if (_settings.SaveAssetsAfterLoad)
-                    _resultLog = "updated";
-                else
-                    _resultLog = "downloaded";
-            }
-
-            resultLogBuilder.AppendLine($"Data for [{_index}] {_name} {_resultLog}");
-
-            if(_settings.SaveAssetsAfterLoad)
-                resultLogBuilder.AppendLine($"File Path: {_filePath}");
+            resultLogBuilder.AppendLine($"Data for [{_index}] {_name} updated");
 
 #if UNITY_EDITOR
             var dataBytesCount = _request.downloadHandler.data == null ? 0 : _request.downloadHandler.data.Length;

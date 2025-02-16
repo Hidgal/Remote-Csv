@@ -70,42 +70,50 @@ namespace RemoteCsv
 
         protected void OnDownloadFinished()
         {
-            if (_downloadService.IsSuccessed)
+            string filePath;
+            for (int i = 0; i < _remotes.Length; i++)
             {
-                string filePath;
+                if (_remotes[i] == null) continue;
+                if (_remotes[i].TargetScriptable == false) continue;
 
-                for (int i = 0; i < _remotes.Length; i++)
+                filePath = _remotes[i].GetFilePath();
+
+                if (_downloadService.Result[i].IsLoaded)
                 {
-                    if (_remotes[i] == null) continue;
-                    if (_remotes[i].TargetScriptable == false) continue;
-                    if (_downloadService.Result[i].IsLoaded == false) continue;
-
-                    filePath = _remotes[i].GetFilePath();
-
-                    if (_settings.SaveAssetsAfterLoad)
+                    RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, _downloadService.Result[i].Data);
+                }
+                else
+                {
+                    if (File.Exists(filePath))
                     {
-                        if (FileExtensions.GetFileHash(filePath) == FileExtensions.GetHash(_downloadService.Result[i].Data))
-                        {
-                            continue;
-                        }
+                        RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, filePath);
                     }
-
-                    if (RemoteCsvParser.ParseObject(_remotes[i].TargetScriptable, _downloadService.Result[i].Data))
+                    else
                     {
-#if UNITY_EDITOR
-                        UnityEditor.EditorUtility.SetDirty(_remotes[i].TargetScriptable);
-#endif
-                        TryCreateDirectory(filePath);
-
-                        File.WriteAllBytes(filePath, _downloadService.Result[i].Data);
+                        continue;
                     }
                 }
 
 #if UNITY_EDITOR
-                UnityEditor.AssetDatabase.SaveAssets();
-                UnityEditor.AssetDatabase.Refresh();
+                UnityEditor.EditorUtility.SetDirty(_remotes[i].TargetScriptable);
 #endif
+
+                if (_settings.SaveAssetsAfterLoad)
+                {
+                    if (FileExtensions.GetFileHash(filePath) == FileExtensions.GetHash(_downloadService.Result[i].Data))
+                    {
+                        continue;
+                    }
+
+                    TryCreateDirectory(filePath);
+                    File.WriteAllBytes(filePath, _downloadService.Result[i].Data);
+                }
             }
+
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+#endif
 
             CallFinish();
         }

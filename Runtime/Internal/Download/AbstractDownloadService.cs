@@ -52,18 +52,21 @@ namespace RemoteCsv.Internal.Download
             if (_cts != null)
             {
                 Logger.LogWarning("Can`t start data loading - loading is already started");
+                Finish();
                 return;
             }
 
             if (_remotes == null)
             {
                 Logger.LogError("Can`t start data loading - remotes list is null");
+                Finish();
                 return;
             }
 
             if (_remotes.Length == 0)
             {
                 Logger.Log("There`s no remotes to load");
+                Finish();
                 return;
             }
 
@@ -113,17 +116,17 @@ namespace RemoteCsv.Internal.Download
             Finish();
         }
 
-        private void OnRootTokenCancel()
-        {
-            Dispose();
-        }
-
-        private void Finish()
+        protected void Finish()
         {
             _isFinished = true;
             OnLoadFinish?.Invoke();
 
             _onCompleteCallback?.Invoke();
+        }
+
+        private void OnRootTokenCancel()
+        {
+            Dispose();
         }
     }
 }
