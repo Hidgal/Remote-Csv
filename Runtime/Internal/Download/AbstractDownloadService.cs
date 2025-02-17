@@ -116,7 +116,6 @@ namespace RemoteCsv.Internal.Download
         private void OnRootTokenCancel()
         {
             Dispose();
-            Logger.LogError("Load operation was canceled");
         }
 
         private void Finish()

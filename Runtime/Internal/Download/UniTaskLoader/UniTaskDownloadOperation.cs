@@ -21,8 +21,7 @@ namespace RemoteCsv.Internal.Download.UniTaskLoader
 
             if (!IsRequestValid()) return;
 
-            await SaveResult().AsUniTask();
-
+            SaveResult();
             FinishLoading();
         }
     }

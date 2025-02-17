@@ -21,8 +21,7 @@ namespace RemoteCsv.Internal.Download.EditorCoroutineLoader
 
             if (!IsRequestValid()) yield break;
 
-            yield return SaveResult();
-
+            SaveResult();
             FinishLoading();
         }
     }

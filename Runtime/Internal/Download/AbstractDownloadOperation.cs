@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +23,6 @@ namespace RemoteCsv.Internal.Download
         protected string _url;
 
         protected string _name => _remoteData.FileName;
-        protected string _dataHash => _remoteData.Hash;
         protected string _fileNameWithExtension => _remoteData.Extension;
 
         public DownloadResult Result => _result == null ? new() : _result;
@@ -33,6 +33,7 @@ namespace RemoteCsv.Internal.Download
             _token = token;
             _settings = settings;
             _remoteData = remoteScriptable;
+            _filePath = _remoteData.GetFilePath();
 
             if (_remoteData != null)
                 _url = GoogleUrlValidator.ValidateUrl(_remoteData.Url);
@@ -106,7 +107,7 @@ namespace RemoteCsv.Internal.Download
             if (string.IsNullOrEmpty(_resultLog))
             {
                 if (_settings.SaveAssetsAfterLoad)
-                    _resultLog = string.IsNullOrEmpty(_dataHash) ? "downloaded" : "updated";
+                    _resultLog = "updated";
                 else
                     _resultLog = "downloaded";
             }
@@ -125,27 +126,9 @@ namespace RemoteCsv.Internal.Download
             Logger.Log(resultLogBuilder.ToString());
         }
 
-        protected async Task SaveResult()
+        protected void SaveResult()
         {
-            var newHash = FileExtensions.GetHash(_request.downloadHandler.data);
-            _result = new(_request.downloadHandler.data, newHash);
-
-            if (_settings.SaveAssetsAfterLoad)
-            {
-                if (_remoteData.Hash == newHash) return;
-                
-                _filePath = _remoteData.GetFilePath();
-                TryCreateDirectory();
-
-                if (_request.downloadHandler.data != null)
-                    await File.WriteAllBytesAsync(_filePath, _request.downloadHandler.data, cancellationToken: _token);
-                else
-                    await File.WriteAllTextAsync(_filePath, string.Empty, cancellationToken: _token);
-
-#if UNITY_EDITOR
-                UnityEditor.AssetDatabase.ImportAsset(_remoteData.GetAssetPath());
-#endif
-            }
+            _result = new(_request.downloadHandler.data);
         }
     }
 }

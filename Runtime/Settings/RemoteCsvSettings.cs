@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 
 namespace RemoteCsv.Settings
@@ -11,6 +12,6 @@ namespace RemoteCsv.Settings
         private bool _saveCsvAssetsInBuilds = true;
 
         public bool SaveAssetsAfterLoad => Application.isEditor ? _saveCsvAssetsInEditor : _saveCsvAssetsInBuilds;
-        public string FolderPath => Application.streamingAssetsPath;
+        public string FolderPath => Path.Combine(Application.persistentDataPath, "RemoteCsv");
     }
 }
