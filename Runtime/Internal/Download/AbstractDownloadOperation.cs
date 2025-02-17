@@ -29,6 +29,7 @@ namespace RemoteCsv.Internal.Download
             _token = token;
             _settings = settings;
             _remoteData = remoteScriptable;
+            _filePath = _remoteData.GetFilePath();
 
             if (_remoteData != null)
                 _url = GoogleUrlValidator.ValidateUrl(_remoteData.Url);
