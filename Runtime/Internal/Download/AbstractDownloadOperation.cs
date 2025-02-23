@@ -129,6 +129,17 @@ namespace RemoteCsv.Internal.Download
         protected void SaveResult()
         {
             _result = new(_request.downloadHandler.data);
+            _filePath = _remoteData.GetFilePath();
+
+            try
+            {
+                TryCreateDirectory();
+                File.WriteAllBytes(_filePath, _result.Data);
+            }
+            catch(Exception ex)
+            {
+                Logger.LogError(ex.Message + "\n" + ex.StackTrace);
+            }
         }
     }
 }
